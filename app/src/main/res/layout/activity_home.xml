@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/car">
+
+    <include
+        android:id="@+id/toolbar"
+        layout="@layout/tool_bar" />
+
+    <TextView
+        android:id="@+id/txtWB"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="30dp"
+        android:paddingEnd="30dp"
+        android:paddingTop="20dp"
+        android:textColor="@color/colorWhite"
+        android:textSize="30sp"
+        android:text="WELCOME BACK," />
+
+    <TextView
+        android:id="@+id/txtName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="30dp"
+        android:paddingEnd="30dp"
+        android:textColor="@color/colorAccent"
+        android:textSize="30sp"
+        android:text="CAROLINA" />
+
+    <EditText
+        android:id="@+id/txtPickup"
+        android:layout_width="320dp"
+        android:layout_height="30dp"
+        android:layout_gravity="center"
+        android:layout_marginStart="30dp"
+        android:layout_marginEnd="30dp"
+        android:layout_marginTop="20dp"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp"
+        android:background="@color/colorPrimary"
+        android:text="Pick-up Location"
+        android:textSize="18sp"
+        android:textColor="@color/colorTextBlack"/>
+
+    <GridLayout
+        android:layout_width="320dp"
+        android:layout_height="110dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="50dp"
+        android:columnCount="2"
+        android:rowCount="4"
+        android:background="@color/colorPrimary"
+        android:visibility="visible">
+
+        <TextView
+            android:id="@+id/lblStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="50dp"
+            android:layout_marginTop="20dp"
+            android:text="2018 STATUS"
+            android:textColor="@color/colorPrimaryDark" />
+
+        <TextView
+            android:id="@+id/lblPoints"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="50dp"
+            android:layout_marginEnd="15dp"
+            android:layout_marginTop="20dp"
+            android:text="POINTS"
+            android:textColor="@color/colorPrimaryDark" />
+
+        <TextView
+            android:id="@+id/txtStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_column="0"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="50dp"
+            android:layout_row="1"
+            android:text="Gold Plus"
+            android:textColor="@color/colorPrimaryDark" />
+
+        <TextView
+            android:id="@+id/txtPoints"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_column="1"
+            android:layout_marginStart="50dp"
+            android:layout_row="1"
+            android:text="103,003"
+            android:textColor="@color/colorPrimaryDark" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="10dp"
+            android:layout_columnSpan="2"
+            android:layout_marginEnd="15dp"
+            android:layout_marginStart="15dp"
+            android:background="@color/colorPrimaryDark" />
+
+        <Button
+            android:id="@+id/button3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_column="0"
+            android:layout_columnSpan="2"
+            android:layout_row="3"
+            android:paddingStart="15dp"
+            android:background="@android:color/transparent"
+            android:text="VIEW ACCOUNT ->"
+            android:textAlignment="viewStart"
+            android:textColor="@color/colorPrimaryDark" />
+
+    </GridLayout>
+
+    <LinearLayout
+        android:layout_width="320dp"
+        android:layout_height="150dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="15dp"
+        android:background="@color/colorPrimary"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/lblReservations"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="15dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="20dp"
+            android:text="UPCOMING RESERVATION"
+            android:textColor="@color/colorPrimaryDark" />
+
+        <TextView
+            android:id="@+id/txtReservationDatetime"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="15dp"
+            android:layout_marginStart="15dp"
+            android:text="JUN 9, 2:00 PM"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="18sp"
+            android:textStyle="normal" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="10dp"
+            android:layout_columnSpan="2"
+            android:layout_marginEnd="15dp"
+            android:layout_marginStart="15dp"
+            android:background="@color/colorPrimaryDark" />
+
+        <Button
+            android:id="@+id/btnTripSummary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:paddingLeft="15dp"
+            android:text="VIEW TRIP SUMMARY ->"
+            android:textAlignment="viewStart"
+            android:textColor="@color/colorPrimaryDark" />
+
+        <Button
+            android:id="@+id/btnCheckout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:paddingLeft="15dp"
+            android:text="DIGITAL CHECKOUT ->"
+            android:textAlignment="viewStart"
+            android:textColor="@color/colorPrimaryDark" />
+    </LinearLayout>
+
+
+</LinearLayout>
