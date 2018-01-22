@@ -66,5 +66,5 @@ public class ComparePictures {
             e.printStackTrace();
         }*/
     }
-    
+
 }
