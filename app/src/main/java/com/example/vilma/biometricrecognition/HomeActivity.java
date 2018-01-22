@@ -2,6 +2,7 @@ package com.example.vilma.biometricrecognition;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBMapper;
 
 /**
  * Created by vilma on 1/20/2018.
