@@ -31,7 +31,9 @@ public class ComparePictures {
     private AmazonRekognitionClient rekognitionClient;
     private Float similarityThreshold = 80F;
     //String photo = "photo.jpg";
-    String bucket = "S3bucket";
+    //String source = "My_Face.jpg";
+    //String source = "My_Face2.jpg";
+    String bucket = Constants.BUCKET_NAME;
 
     private void comparePic(Context context, String source, String target) {
 
