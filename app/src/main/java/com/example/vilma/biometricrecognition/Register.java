@@ -222,6 +222,7 @@ public class Register extends BaseActivity {
 
         @Override
         protected String doInBackground(String... params) {
+            File file = new File(filePath);
             BasicAWSCredentials awsCreds = new BasicAWSCredentials(Constants.ACCESS_KEY_ID,
                     Constants.SECRET_ACCESS_KEY_);
 
@@ -229,7 +230,7 @@ public class Register extends BaseActivity {
 
             //File file = new File(S3JavaSDKExample.class.getResource(fileName).toURI());
 
-            PutObjectRequest putRequest1 = new PutObjectRequest(Constants.BUCKET_NAME,txtUsername.getText().toString(),filePath);
+            PutObjectRequest putRequest1 = new PutObjectRequest(Constants.BUCKET_NAME,txtUsername.getText().toString(),file);
             PutObjectResult response1 = s3Client.putObject(putRequest1);
             return null;
         }
