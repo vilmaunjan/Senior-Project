@@ -26,6 +26,7 @@ public class Constants {
      * on what to fill in.
      */
     public static final String COGNITO_POOL_ID = "us-east-1:f91fe70a-8228-4626-bde6-16d470fb6358";
+    //public static final String COGNITO_POOL_ID = "us-east-1:5721923b-5e19-4ba7-a4df-9f83b5f1582d";
 
     /*
      * Region of your Cognito identity pool ID.

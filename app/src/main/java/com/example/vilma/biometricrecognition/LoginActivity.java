@@ -6,11 +6,9 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-
 import com.amazonaws.mobile.client.AWSMobileClient;
-//import com.amazonaws.mobile.client.AWSMobileClient;
-//import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBMapper;
-//import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
+import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBMapper;
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
 
 /**
  * MAIN CLASS
@@ -24,7 +22,10 @@ public class LoginActivity extends BaseActivity {
 
     Button btnLogin;
     TextView txtSignup;
-    //DynamoDBMapper dynamoDBMapper;
+    DynamoDBMapper dynamoDBMapper;
+
+
+
 
     /*
     This function hold all database connectivity initialization.
@@ -34,10 +35,12 @@ public class LoginActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
-
-      //  AWSMobileClient.getInstance().initialize(this).execute();
-
+        AWSMobileClient.getInstance().initialize(this).execute();
+        AmazonDynamoDBClient dynamoDBClient = new AmazonDynamoDBClient(AWSMobileClient.getInstance().getCredentialsProvider());
+        this.dynamoDBMapper = DynamoDBMapper.builder()
+                .dynamoDBClient(dynamoDBClient)
+                .awsConfiguration(AWSMobileClient.getInstance().getConfiguration())
+                .build();
         initUI();
 
     }
