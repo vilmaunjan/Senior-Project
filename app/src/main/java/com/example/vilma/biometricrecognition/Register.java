@@ -3,9 +3,14 @@ package com.example.vilma.biometricrecognition;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ContentUris;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Environment;
 import android.provider.DocumentsContract;
@@ -16,19 +21,35 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.auth.PropertiesCredentials;
+import com.amazonaws.mobile.client.AWSMobileClient;
+import com.amazonaws.mobile.config.AWSConfiguration;
+import com.amazonaws.mobileconnectors.s3.transferutility.*;
 
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferObserver;
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferUtility;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBMapper;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.services.s3.model.PutObjectResult;
+
 /**
  * Created by vilma on 1/20/2018.
  */
@@ -41,7 +62,9 @@ public class Register extends BaseActivity {
 
     Button btnTakePic;
     Button btnRegister;
-    private String mCurrentPhotoPath;
+    ImageView mImageView;
+    EditText txtUsername;
+    private String mCurrentPhotoPath = null;
     static final int REQUEST_IMAGE_CAPTURE = 1;
     // TAG for logging;
     private static final String TAG = "UploadActivity";
@@ -61,18 +84,27 @@ public class Register extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
+
+
+        transferUtility = Util.getTransferUtility(this);
+
         initUI();
     }
 
     private void initUI() {
         btnRegister = (Button) findViewById(R.id.btnRegister);
         btnTakePic = (Button) findViewById(R.id.btnProfilePic);
+        mImageView = (ImageView) findViewById(R.id.image_view);
+        txtUsername = (EditText) findViewById(R.id.txtUsername);
 
         btnRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(Register.this, LoginActivity.class);
-                startActivity(intent);
+                boolean registerRequir = checkrequirements();
+                if(registerRequir){
+                       BeginUpload upload =  new BeginUpload(getApplicationContext(), mCurrentPhotoPath);
+                       upload.execute();
+                }
             }
         });
 
@@ -84,6 +116,16 @@ public class Register extends BaseActivity {
             }
         });
 
+    }
+
+    private boolean checkrequirements() {
+        if(txtUsername.getText().toString().equals("") ||
+                txtUsername.getText().toString().equals("Enter a Username")){
+            Toast.makeText(this,"Please enter a unique username", Toast.LENGTH_LONG).show();
+            return false;
+        }else{
+            return true;
+        }
     }
 
     private File createImageFile() throws IOException {
@@ -108,13 +150,16 @@ public class Register extends BaseActivity {
         // Ensure that there's a camera activity to handle the intent
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
             // Create the File where the photo should go
+            //initializes a File object
             File photoFile = null;
             try {
+                //creates an empty file in the enviroments photo directory.
                 photoFile = createImageFile();
             } catch (IOException ex) {
-                System.out.print("rip");
+                Toast.makeText(this, "dispatch pic error", Toast.LENGTH_SHORT).show();
             }// Continue only if the File was successfully created
             if (photoFile != null) {
+                //creates a Uri(a string of characters used to identify the file
                 Uri photoURI = FileProvider.getUriForFile(this,
                         "com.example.vilma.biometricrecognition.fileprovider",
                         photoFile);
@@ -127,52 +172,124 @@ public class Register extends BaseActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-        //checks to see if the activity is "all good"
-        if (resultCode == Activity.RESULT_OK) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            //checks to see if the activity is "all good"
 
-            //grabs the info from the intents data and set the uri to that data
-            Uri uri = data.getData();
+            case(REQUEST_IMAGE_CAPTURE):
+                {
 
-            //this tries to begin the upload to the s3 bucket using the path of the picture selected
-            try {
-                //grabs path of picture
-                String path = getPath(uri);
+                    if (resultCode == RESULT_OK) {
+                        setPic();
+                        btnTakePic.setText("Different Picture?");
+                    }
 
-                //calls the begin method, and sends the path of the picture we are uploading.
-                beginUpload(path);
-            } catch (URISyntaxException e) {
-                Toast.makeText(this,
-                        "Unable to get the file from the given URI.  See error log for details",
-                        Toast.LENGTH_LONG).show();
-                Log.e(TAG, "Unable to upload file from the given uri", e);
+            }
+            case(2):
+                {
+                    /*if (resultCode == Activity.RESULT_OK) {
+
+                        //grabs the info from the intents data and set the uri to that data
+                        Uri uri = data.getData();
+
+                        //this tries to begin the upload to the s3 bucket using the path of the picture selected
+                        try {
+                            //grabs path of picture
+                            String path = getPath(uri);
+                            //calls the begin method, and sends the path of the picture we are uploading.
+                            beginUpload(path);
+                        } catch (URISyntaxException e) {
+                            Toast.makeText(this,
+                                    "Unable to get the file from the given URI.  See error log for details",
+                                    Toast.LENGTH_LONG).show();
+                            Log.e(TAG, "Unable to upload file from the given uri", e);
+                        }
+                    }*/
+                    Toast.makeText(this, "hey", Toast.LENGTH_LONG);
             }
         }
     }
 
-    private void beginUpload(String filePath) {
-        //makes sure there is a filePath sent
-        if (filePath == null) {
-            Toast.makeText(this, "Could not find the filepath of the selected file",
-                    Toast.LENGTH_LONG).show();
-            return;
+    private class BeginUpload extends AsyncTask<String, Void, String>{
+
+        private Context mContext;
+        private String filePath;
+
+        public BeginUpload(Context context, String string) {
+            mContext = context;
+            filePath = string;
         }
-        //creates a file with the filepath
-        File file = new File(filePath);
 
-        //begins the uploading using the transferUtility object initalized at the start of this
-        //class
-        TransferObserver observer = transferUtility.upload(Constants.BUCKET_NAME, file.getName(),
-                file);
+        @Override
+        protected String doInBackground(String... params) {
+            BasicAWSCredentials awsCreds = new BasicAWSCredentials(Constants.ACCESS_KEY_ID,
+                    Constants.SECRET_ACCESS_KEY_);
 
-        //comments below were created by amazon
-        /*
-         * Note that usually we set the transfer listener after initializing the
-         * transfer. However it isn't required in this sample app. The flow is
-         * click upload button -> start an activity for image selection
-         * startActivityForResult -> onActivityResult -> beginUpload -> onResume
-         * -> set listeners to in progress transfers.
-         */
-        // observer.setTransferListener(new UploadListener());
+            AmazonS3Client s3Client = new AmazonS3Client(awsCreds);
+
+            //File file = new File(S3JavaSDKExample.class.getResource(fileName).toURI());
+
+            PutObjectRequest putRequest1 = new PutObjectRequest(Constants.BUCKET_NAME,txtUsername.getText().toString(),filePath);
+            PutObjectResult response1 = s3Client.putObject(putRequest1);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            Toast toast = Toast.makeText(mContext, "Upload to S3 complete", Toast.LENGTH_SHORT);
+            toast.show();
+        }
+
+        @Override
+        protected void onPreExecute() {}
+
+        @Override
+        protected void onProgressUpdate(Void... values) {}
+        ///////////////////////////////////////FORTH ATTEMPT////////////////////////////////////////
+        //the code below is an example
+        /*BasicAWSCredentials awsCreds = new BasicAWSCredentials(Constants.ACCESS_KEY_ID,
+                Constants.SECRET_ACCESS_KEY_);
+
+        AmazonS3Client s3Client = new AmazonS3Client(awsCreds);
+
+        //File file = new File(S3JavaSDKExample.class.getResource(fileName).toURI());
+
+        PutObjectRequest putRequest1 = new PutObjectRequest(Constants.BUCKET_NAME,txtUsername.getText().toString(),filePath);
+        PutObjectResult response1 = s3Client.putObject(putRequest1);
+        */
+
+    }
+
+    public static Bitmap RotateBitmap(Bitmap source, float angle)
+    {
+        Matrix matrix = new Matrix();
+        matrix.postRotate(angle);
+        return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(), matrix, true);
+    }
+
+    private void setPic() {
+        // Get the dimensions of the View
+        int targetW = mImageView.getWidth();
+        int targetH = mImageView.getHeight();
+
+        // Get the dimensions of the bitmap
+        BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+        bmOptions.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
+        int photoW = bmOptions.outWidth;
+        int photoH = bmOptions.outHeight;
+
+        // Determine how much to scale down the image
+        int scaleFactor = Math.min(photoW/targetW, photoH/targetH);
+
+        // Decode the image file into a Bitmap sized to fill the View
+        bmOptions.inJustDecodeBounds = false;
+        bmOptions.inSampleSize = scaleFactor;
+        bmOptions.inPurgeable = true;
+
+        Bitmap bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
+        bitmap = RotateBitmap(bitmap,270);
+        mImageView.setImageBitmap(bitmap);
     }
 
     @SuppressLint("NewApi")

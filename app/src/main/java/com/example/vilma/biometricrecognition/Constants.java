@@ -43,4 +43,15 @@ public class Constants {
      * Region of your bucket.
      */
     public static final String BUCKET_REGION = "us-east-1";
+
+    /*
+     * S3 user access id
+     */
+    public static final String ACCESS_KEY_ID = "AKIAIHONOSAKPXFMHDOA";
+
+    /*
+     * s3 user SECRET access key
+     */
+    public static final String SECRET_ACCESS_KEY_= "JSCkcnFJTGZelrbsUXX+GYphbzNH0Nc228O7LcET";
+
 }

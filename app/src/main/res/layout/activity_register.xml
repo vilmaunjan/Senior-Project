@@ -28,21 +28,29 @@
         android:layout_height="40dp"
         android:layout_gravity="center"
         android:layout_marginBottom="20dp"
-        android:layout_marginTop="80dp"
+        android:layout_marginTop="20dp"
         android:background="@color/colorPrimary"
+        android:hint="Enter Username Here"
         android:inputType="textPersonName"
         android:paddingLeft="10dp"
         android:textColor="@color/colorTextBlack"
-        android:text="Enter a Username"/>
+        android:textColorHint="@android:color/darker_gray" />
 
     <Button
         android:id="@+id/btnProfilePic"
         android:layout_width="320dp"
         android:layout_height="45dp"
         android:layout_gravity="center"
-        android:layout_marginBottom="110dp"
+        android:layout_marginBottom="20dp"
         android:background="@color/colorTransparentGrey"
         android:text="Take a Picture of you" />
+
+    <ImageView
+        android:id="@+id/image_view"
+        android:layout_width="350dp"
+        android:layout_height="200dp"
+        android:layout_marginBottom="20dp"
+        android:layout_gravity="center_horizontal" />
 
     <Button
         android:id="@+id/btnRegister"
