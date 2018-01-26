@@ -35,7 +35,7 @@ public class ComparePictures extends AsyncTask<Object, String, String> {
     private Context mContext;
     private String mSource;
     private String mTarget;
-    private String confidence;
+    private Float confidence;
     private static AmazonRekognitionClient rekognitionClient;
     private static Float similarityThreshold = 80F;
     private static String bucket = Constants.BUCKET_NAME;
@@ -43,10 +43,16 @@ public class ComparePictures extends AsyncTask<Object, String, String> {
     //String source = "My_Face.jpg";
     //String source = "My_Face2.jpg";
 
+    //Constructor
     public ComparePictures(Context context, String source, String target){
         mContext = context;
         mSource = source;
         mTarget = target;
+    }
+
+    //Getter to get the confidence
+    public Float getConfidence() {
+        return confidence;
     }
 
     @Override
@@ -73,7 +79,7 @@ public class ComparePictures extends AsyncTask<Object, String, String> {
         for (CompareFacesMatch match: faceDetails){
             ComparedFace face= match.getFace();
             BoundingBox position = face.getBoundingBox();
-            confidence = face.getConfidence().toString();
+            confidence = face.getConfidence();
             System.out.println("Face at " + position.getLeft().toString()
                     + " " + position.getTop()
                     + " matches with " + face.getConfidence().toString()
@@ -86,7 +92,7 @@ public class ComparePictures extends AsyncTask<Object, String, String> {
 
 
     protected void onPostExecute(String result) {
-        Toast toast = Toast.makeText(this.mContext, confidence, Toast.LENGTH_SHORT);
+        Toast toast = Toast.makeText(this.mContext, ""+confidence, Toast.LENGTH_SHORT);
         toast.show();
     }
 /*
