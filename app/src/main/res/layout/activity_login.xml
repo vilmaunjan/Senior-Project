@@ -19,16 +19,15 @@
         android:textColor="@color/colorTextBlack"
         android:hint="Enter Username Here"/>
 
-    <Button
-        android:id="@+id/btnLogin"
+    <fragment
+        android:id="@+id/fragment2"
+        android:name="com.example.vilma.biometricrecognition.TakePicFragment"
         android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginBottom="5dp"
         android:layout_marginTop="100dp"
-        android:backgroundTint="@color/colorAccent"
-        android:text="Log in"
-        android:textColor="@color/colorPrimaryDark" />
+        tools:layout="@layout/take_pic_fragment" />
 
     <TextView
         android:id="@+id/txtSignup"
@@ -36,6 +35,6 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:text="Create an account"
-        android:textColor="@color/colorTextButton"/>
+        android:textColor="@color/colorTextButton" />
 
 </LinearLayout>
