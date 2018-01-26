@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:id="@+id/nav_home"
+        android:icon="@mipmap/ic_home_white_24dp"
+        android:title="Home"/>
+
+    <item android:id="@+id/nav_reservations"
+        android:icon="@mipmap/ic_directions_car_white_24dp"
+        android:title="Reservations"/>
+
+    <item android:id="@+id/nav_account"
+        android:icon="@mipmap/ic_person_outline_white_24dp"
+        android:title="Account"/>
+
+    <item android:id="@+id/nav_support"
+        android:icon="@mipmap/ic_help_outline_white_24dp"
+        android:title="Support"/>
+
+    <item android:id="@+id/nav_settings"
+        android:icon="@mipmap/ic_settings_white_24dp"
+        android:title="Settings"/>
+
+    <item android:id="@+id/nav_acclimate"
+        android:icon="@mipmap/ic_help_outline_white_24dp"
+        android:title="Acclimate"/>
+
+
+</menu>

@@ -7,11 +7,6 @@
     android:orientation="vertical"
     android:background="@drawable/car">
 
-    <include
-        android:id="@+id/toolbar"
-        layout="@layout/tool_bar" />
-
-
     <EditText
         android:id="@+id/txtUsername"
         android:layout_width="320dp"

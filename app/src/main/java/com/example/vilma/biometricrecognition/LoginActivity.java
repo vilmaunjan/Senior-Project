@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -51,7 +52,10 @@ public class LoginActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        //setContentView(R.layout.activity_login);
+        //Use frame layout instead of setContentView to include the menu and toolbar
+        FrameLayout contentFrameLayout = (FrameLayout) findViewById(R.id.content_frame); //Remember this is the FrameLayout area within your activity_main.xml
+        getLayoutInflater().inflate(R.layout.activity_login, contentFrameLayout);
 
 
         initUI();
@@ -79,6 +83,11 @@ public class LoginActivity extends BaseActivity {
 
                 }else {
                     checkTable.execute();
+
+                    //Compare pictures
+
+                    //this is the pic
+
 
                 }
                 if(dBManager.getLoginFlag()){

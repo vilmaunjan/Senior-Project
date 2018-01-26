@@ -7,9 +7,6 @@
     android:background="@drawable/black_car"
     android:orientation="vertical">
 
-    <include
-        android:id="@+id/toolbar"
-        layout="@layout/tool_bar" />
 
     <TextView
         android:id="@+id/txtWelcome"

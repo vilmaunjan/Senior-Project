@@ -7,20 +7,16 @@
     android:orientation="vertical"
     android:background="@drawable/car">
 
-    <include
-        android:id="@+id/toolbar"
-        layout="@layout/tool_bar" />
-
     <TextView
         android:id="@+id/txtWB"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingStart="30dp"
         android:paddingEnd="30dp"
+        android:paddingStart="30dp"
         android:paddingTop="20dp"
-        android:textColor="@color/colorWhite"
-        android:textSize="30sp"
-        android:text="WELCOME BACK," />
+        android:text="WELCOME BACK,"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="30sp" />
 
     <TextView
         android:id="@+id/txtName"
@@ -43,7 +39,8 @@
         android:paddingStart="10dp"
         android:paddingEnd="10dp"
         android:background="@color/colorPrimary"
-        android:text="Pick-up Location"
+        android:icon="@mipmap/ic_location_on_white_24dp"
+        android:hint="Pick-up Location"
         android:textSize="18sp"
         android:textColor="@color/colorTextBlack"/>
 
