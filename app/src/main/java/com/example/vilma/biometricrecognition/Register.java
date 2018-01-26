@@ -105,6 +105,7 @@ public class Register extends BaseActivity {
                 boolean registerRequir = checkrequirements();
 
                 DbManager.createItem createItem = new DbManager.createItem(view.getContext(),(Activity)view.getContext());
+
                 createItem.execute();
 
                 if (registerRequir) {

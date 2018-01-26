@@ -79,7 +79,7 @@ public class LoginActivity extends BaseActivity {
 
                 }else {
                     checkTable.execute();
-                   
+
                 }
                 if(dBManager.getLoginFlag()){
 

@@ -24,6 +24,7 @@ import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.PaginatedList;
 *
 *   Calling Convection: */
 
+
 public class DbManager {
 
     public static String prime_pic;
@@ -31,7 +32,18 @@ public class DbManager {
 
     static Context currentContext;
     static Activity currentActivity;
-    static Intent currentIntent;
+    public static boolean loginFlag =false;
+
+    void setPrime_pic(String pic){
+        prime_pic = pic;
+    }
+
+    public String getPrime_pic(){
+        return getPrime_pic();
+    }
+    public boolean getLoginFlag(){
+        return loginFlag;
+    }
 
 
     public static class createItem extends AsyncTask<String, Void, String> {
@@ -47,36 +59,50 @@ public class DbManager {
 
         @Override
         protected String doInBackground(String... strings) {
-            Looper.prepare();
+//            Looper.prepare();
 
             ManagerClass managerClass = new ManagerClass();
             CognitoCachingCredentialsProvider credentialsProvider = managerClass.getCredentials(currentContext);
+            DynamoDBMapper dynamoDBMapper = managerClass.initDynamoClient(credentialsProvider);
 
             AccountsDO accountsDo = new AccountsDO();
             accountsDo.setUserId(txtUsername.getText().toString());
+
+            // It queries the database for the current set Username
+            DynamoDBQueryExpression queryExpression = new DynamoDBQueryExpression()
+                    .withHashKeyValues(accountsDo);
+
+            PaginatedList<AccountsDO> result = dynamoDBMapper.query(AccountsDO.class, queryExpression);
+
+
             accountsDo.setPic1(txtUsername.getText().toString() + "_prime.jpg");
 
 
-            if (credentialsProvider != null && accountsDo != null) {
-
-                DynamoDBMapper dynamoDBMapper = managerClass.initDynamoClient(credentialsProvider);
+            // if the set Username does not match the database then it create new item
+            if (!accountsDo.getUserId().equals(result.get(0).getUserId())) {
+                // it creates new item in DynamoDB
                 dynamoDBMapper.save(accountsDo);
-
+                return ("1");
 
             } else {
                 return ("2");
 
             }
-            return ("1");
+
 
         }
+
+
+
 
         protected void onPostExecute(String string) {
             super.onPostExecute(string);
             if (string.equals("1")) {
-                Toast.makeText(currentActivity, "Successful", Toast.LENGTH_SHORT).show();
+                // Name is valid
+                Toast.makeText(currentContext, "Successful", Toast.LENGTH_LONG).show();
             } else if (string.equals("2")) {
-                Toast.makeText(currentActivity, "Unsuccessful", Toast.LENGTH_SHORT).show();
+                // if not in the database its going to ask to prompt again
+                Toast.makeText(currentContext, "Account Name Already Exists", Toast.LENGTH_LONG).show();
             }
 
         }
@@ -97,7 +123,7 @@ public class DbManager {
 
         @Override
         protected String doInBackground(String... strings) {
-            Looper.prepare();
+//            Looper.prepare();
 
             ManagerClass managerClass = new ManagerClass();
             CognitoCachingCredentialsProvider credentialsProvider = managerClass.getCredentials(currentContext);
@@ -105,13 +131,6 @@ public class DbManager {
 
             AccountsDO accountsDo = new AccountsDO();
             accountsDo.setUserId(txtUsername.getText().toString());
-
-            //Checking if username is empty or did not enter something valid
-            if (txtUsername.getText().toString().equals("") ||
-                    txtUsername.getText().toString().equals("Enter a Username")) {
-                Toast.makeText(currentContext, "Please enter a unique username", Toast.LENGTH_LONG).show();
-
-            }
 
 
             // It queries the database for the current set Username
@@ -122,25 +141,27 @@ public class DbManager {
 
             // if not in the database its going to ask to prompt again
             if (result.isEmpty()) {
-                Toast.makeText(currentContext, "Please Enter A Valid UserName or Register", Toast.LENGTH_LONG).show();
-            } else {
-                prime_pic = result.get(0).getPic1().toString() ;
 
-                Toast.makeText(currentContext, "Thank you", Toast.LENGTH_LONG).show();
+                return "unsuccessful";
+            } else {
+
+               DbManager.prime_pic =result.get(0).getPic1();
+
+                return "success";
             }
-            return "success";
+
         }
 
-/*
-            try{
-                accountsDo.setUserId(txtUsername.getText().toString());
+        /*
+                    try{
+                        accountsDo.setUserId(txtUsername.getText().toString());
 
 
 
 
-            }catch(Exception e){
-                Toast.makeText(currentContext, "something broke", Toast.LENGTH_LONG).show();
-            }*/
+                    }catch(Exception e){
+                        Toast.makeText(currentContext, "something broke", Toast.LENGTH_LONG).show();
+                    }*/
 /*
             if (credentialsProvider != null && accountsDo != null) {
 
@@ -154,15 +175,22 @@ public class DbManager {
 
             return ("1");
         }*/
-/*
-        protected void onPostExecute(String string) {
-            super.onPostExecute(string);
-            if (string.equals("1")) {
-                Toast.makeText(currentContext, "Welcome", Toast.LENGTH_SHORT).show();
-            } else if (string.equals("2")) {
-                Toast.makeText(currentContext, "Login unsuccessful", Toast.LENGTH_SHORT).show();
-            }*/
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
 
+            // if not in the database its going to ask to prompt again
+            if (result.equals("unsuccessful")) {
+                Toast.makeText(currentContext, "Please Enter A Valid UserName or Register", Toast.LENGTH_LONG).show();
+                loginFlag = false;
+            } else if (result.equals("success")) {
+
+                Toast.makeText(currentContext, "Thank you", Toast.LENGTH_LONG).show();
+                loginFlag = true;
+
+            }
+
+        }
     }
 }
+
 
