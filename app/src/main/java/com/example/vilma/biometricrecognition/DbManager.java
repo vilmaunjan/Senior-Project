@@ -31,12 +31,9 @@ public class DbManager {
 
 
     static Context currentContext;
-    static Activity currentActivity;
+//    static Activity currentActivity;
     public static boolean loginFlag =false;
 
-    void setPrime_pic(String pic){
-        prime_pic = pic;
-    }
 
     public String getPrime_pic(){
         return getPrime_pic();
@@ -47,15 +44,17 @@ public class DbManager {
 
 
     public static class createItem extends AsyncTask<String, Void, String> {
-        EditText txtUsername;
+        String txtUsername;
 
 
         // Save the context received via constructor in a local variable
         // it also saves the activity of the current view
-        public createItem(Context context, Activity activity) {
+        public createItem(Context context, String Username) {
             currentContext = context;
-            txtUsername = (EditText) activity.findViewById(R.id.txtUsername);
+//            txtUsername = (EditText) activity.findViewById(R.id.txtUsername);
+            txtUsername = Username;
         }
+
 
         @Override
         protected String doInBackground(String... strings) {
@@ -66,16 +65,16 @@ public class DbManager {
             DynamoDBMapper dynamoDBMapper = managerClass.initDynamoClient(credentialsProvider);
 
             AccountsDO accountsDo = new AccountsDO();
-            accountsDo.setUserId(txtUsername.getText().toString());
-
+//            accountsDo.setUserId(txtUsername.getText().toString());
+            accountsDo.setUserId(txtUsername);
             // It queries the database for the current set Username
             DynamoDBQueryExpression queryExpression = new DynamoDBQueryExpression()
                     .withHashKeyValues(accountsDo);
 
             PaginatedList<AccountsDO> result = dynamoDBMapper.query(AccountsDO.class, queryExpression);
 
-
-            accountsDo.setPic1(txtUsername.getText().toString() + "_prime.jpg");
+            accountsDo.setPic1(txtUsername+"_prime.jpg");
+//            accountsDo.setPic1(txtUsername.getText().toString() + "_prime.jpg");
 
 
             // if the set Username does not match the database then it create new item
@@ -110,16 +109,18 @@ public class DbManager {
 
 
     public static class checkTable extends AsyncTask<String, Void, String> {
-        EditText txtUsername;
+        String txtUsername;
 
         // Save the context received via constructor in a local variable
         // it also saves the activity of the current view
 
-        public checkTable(Context context, Activity activity) {
+        public checkTable(Context context, String Username) {
             currentContext = context;
-            currentActivity = activity;
-            txtUsername = (EditText) activity.findViewById(R.id.txtUsername);
+//            currentActivity = activity;
+//            txtUsername = (EditText) activity.findViewById(R.id.txtUsername);
+            txtUsername = Username;
         }
+
 
         @Override
         protected String doInBackground(String... strings) {
@@ -130,8 +131,8 @@ public class DbManager {
             DynamoDBMapper dynamoDBMapper = managerClass.initDynamoClient(credentialsProvider);
 
             AccountsDO accountsDo = new AccountsDO();
-            accountsDo.setUserId(txtUsername.getText().toString());
-
+//            accountsDo.setUserId(txtUsername.getText().toString());
+            accountsDo.setUserId(txtUsername);
 
             // It queries the database for the current set Username
             DynamoDBQueryExpression queryExpression = new DynamoDBQueryExpression()
@@ -152,29 +153,6 @@ public class DbManager {
 
         }
 
-        /*
-                    try{
-                        accountsDo.setUserId(txtUsername.getText().toString());
-
-
-
-
-                    }catch(Exception e){
-                        Toast.makeText(currentContext, "something broke", Toast.LENGTH_LONG).show();
-                    }*/
-/*
-            if (credentialsProvider != null && accountsDo != null) {
-
-                DynamoDBMapper dynamoDBMapper = managerClass.initDynamoClient(credentialsProvider);
-                dynamoDBMapper.save(accountsDo);
-
-            } else {
-                return ("2");
-
-            }
-
-            return ("1");
-        }*/
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
 

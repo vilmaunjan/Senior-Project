@@ -40,9 +40,7 @@ public class ComparePictures extends AsyncTask<Object, String, String> {
     private static Float similarityThreshold = 80F;
     private static String bucket = Constants.BUCKET_NAME;
 
-    public String getConfidence() {
-        return confidence;
-    }
+
     //String photo = "photo.jpg";
     //String source = "My_Face.jpg";
     //String source = "My_Face2.jpg";

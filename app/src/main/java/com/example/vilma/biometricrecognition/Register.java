@@ -32,8 +32,6 @@ public class Register extends BaseActivity implements TakePicFragment.PictureTak
     private String mCurrentPhotoPath = null;
     boolean registerRequir = false;
     //the fragment
-    TakePicFragment frag = new TakePicFragment();
-
     //checks if the register requirements have been verified
 
 
@@ -71,7 +69,7 @@ public class Register extends BaseActivity implements TakePicFragment.PictureTak
     public void picClick(String mCurrentPhotoPath, String txtUsername) {
         this.mCurrentPhotoPath = mCurrentPhotoPath;
         S3Upload upload =  new S3Upload(getApplicationContext(), mCurrentPhotoPath,
-                txtUsername + "_prime");
+                txtUsername + "_prime.jpg");
         upload.execute();
         setPic();
     }

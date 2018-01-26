@@ -59,7 +59,8 @@ public class TakePicFragment extends Fragment{
 
     //Tracks which Activity this fragment is called on
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(Context context1) {
+        context  = context1;
         super.onAttach(context);
         //tries to initializes the context into a PictureTakerListener Object
         try{
@@ -96,13 +97,13 @@ public class TakePicFragment extends Fragment{
     public void buttonClicked(View view){
         userName = picCommander.getTxt();
         checkTable(context, getActivity(), userName);
-        if(requirSatisfied) {
+//        if(requirSatisfied) {
             dispatchTakePictureIntent();
             picCommander.picClick(fragPhotoFilePath, userName);
             picButton.setText("Different Picture?");
-        }else{
-            Toast.makeText(getActivity(), "Please choose a different username", Toast.LENGTH_LONG).show();
-        }
+//        }else{
+//            Toast.makeText(getActivity(), "Please choose a different username", Toast.LENGTH_LONG).show();
+//        }
     }
 
     //this method checks to see if there is available external storage
@@ -168,9 +169,9 @@ public class TakePicFragment extends Fragment{
     }
 
     public void checkTable(Context context, Activity activity, String txtUsername) {
-        DbManager.checkTable checkTable = new DbManager.checkTable(context, activity);
+        DbManager.checkTable checkTable = new DbManager.checkTable(context, txtUsername);
         //Checking if username is empty or did not enter something valid
-        if (userName.equals("") || userName.toString().equals("Enter a Username")) {
+        if (txtUsername.equals("") || txtUsername.toString().equals("Enter a Username")) {
             Toast.makeText(context, "Please enter a valid username", Toast.LENGTH_LONG).show();
         } else {
             checkTable.execute();
@@ -178,6 +179,7 @@ public class TakePicFragment extends Fragment{
 
         if (dBManager.getLoginFlag()) {
             requirSatisfied = true;
+
         }
     }
 

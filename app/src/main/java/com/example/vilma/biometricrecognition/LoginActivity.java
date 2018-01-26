@@ -31,7 +31,7 @@ import java.io.File;
 /*
     All classes should extend BaseActivity to be able to see the toolbar
  */
-public class LoginActivity extends BaseActivity implements TakePicFragment.PictureTakerListener{
+public class LoginActivity extends BaseActivity implements TakePicFragment.PictureTakerListener {
 
     String photoPath;
     TextView txtSignup;
@@ -39,6 +39,8 @@ public class LoginActivity extends BaseActivity implements TakePicFragment.Pictu
     String txtUsername = "";
     boolean registerRequir = false;
     TakePicFragment fragment = new TakePicFragment();
+    String source;
+    String target;
 
     //This function hold all database connectivity initialization.
     @Override
@@ -63,8 +65,11 @@ public class LoginActivity extends BaseActivity implements TakePicFragment.Pictu
                 txtUsername = txtUsernameBox.getText().toString();
             }
 
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
         });
 
         txtSignup.setOnClickListener(new View.OnClickListener() {
@@ -77,34 +82,46 @@ public class LoginActivity extends BaseActivity implements TakePicFragment.Pictu
     }
 
     @Override
-    public String getTxt(){
+    public String getTxt() {
         return txtUsername;
     }
 
-
+    //
     @Override
     public void picClick(String photoPath, String txtUsername) {
         this.photoPath = photoPath;
         File file = new File(photoPath);
-        S3Upload upload =  new S3Upload(getApplicationContext(), photoPath,
-                txtUsername+ "_" + file.getName() );
-        upload.execute();
-        comparePic(LoginActivity.this, txtUsername + file.getName(), txtUsername + "_prime.jpg");
 
-    }
-
-    public void comparePic(Context context, String source, String target ){
-        ComparePictures j = new ComparePictures(context,source, target);
-        j.execute();
-
-        if(Integer.parseInt(j.getConfidence())>=80){
-            Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
-            startActivity(intent);
-        } else{
-            Toast.makeText(context,
-                    "Please enter a valid username and picture", Toast.LENGTH_SHORT).show();
+        //This requirSatisfied is passing the bool logic from the database
+        // then the next iteration of if checks if the picture that was taken does meet reqs
+        //if fragment.requirSatisfied = true means the user is in the db
+        if (fragment.requirSatisfied) {
+            source = txtUsername + "_prime.jpg";
+            target = txtUsername + file.getName();
+            S3Upload upload = new S3Upload(getApplicationContext(), photoPath,
+                    txtUsername + "_" + file.getName());
+            upload.execute();
+            comparePic(LoginActivity.this);
         }
     }
 
+    /*
+     *This method call ComparesPicture and if the accuracy is greater or equal than 80 it proceeds
+     * to login, otherwise should prompt a toast message that login failed.
+     */
+    public void comparePic(Context context) {
 
+        ComparePictures j = new ComparePictures(context, source, target);
+        j.execute();
+
+        if (j.getConfidence() >= 80) {
+            Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+            startActivity(intent);
+        } else {
+            Toast.makeText(context,
+                    "Please enter a valid picture", Toast.LENGTH_SHORT).show();
+        }
+    }
 }
+
+
