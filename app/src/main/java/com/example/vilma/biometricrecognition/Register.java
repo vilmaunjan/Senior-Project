@@ -67,7 +67,6 @@ public class Register extends BaseActivity {
     EditText txtUsername;
 
 
-    String Username;
     private String mCurrentPhotoPath = null;
     static final int REQUEST_IMAGE_CAPTURE = 1;
     // TAG for logging;
@@ -104,7 +103,10 @@ public class Register extends BaseActivity {
             @Override
             public void onClick(View view) {
                 boolean registerRequir = checkrequirements();
-                new updateTable().execute();
+
+                DbManager.createItem createItem = new DbManager.createItem(view.getContext(),(Activity)view.getContext());
+                createItem.execute();
+
                 if (registerRequir) {
                     BeginUpload upload = new BeginUpload(getApplicationContext(), mCurrentPhotoPath);
                     upload.execute();
@@ -134,8 +136,11 @@ public class Register extends BaseActivity {
 
     private File createImageFile() throws IOException {
         // Create an image file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
+        String imageFileName = txtUsername.getText().toString()+"_prime";
+
+
+        //String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        //String imageFileName = "JPEG_" + timeStamp + "_";
         File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         File image = File.createTempFile(
                 imageFileName,  /* prefix */
@@ -362,46 +367,8 @@ public class Register extends BaseActivity {
     }
 
 
-    /*
-    * From here on is Database stuff
-    * */
 
 
-    private class updateTable extends AsyncTask<String, Void, String> {
-
-
-        @Override
-        protected String doInBackground(String... strings) {
-
-            ManagerClass managerClass = new ManagerClass();
-            CognitoCachingCredentialsProvider credentialsProvider = managerClass.getCredentials(Register.this);
-
-            AccountsDO accountsDo = new AccountsDO();
-            accountsDo.setUserId(txtUsername.getText().toString());
-
-            if (credentialsProvider != null && accountsDo != null) {
-
-                DynamoDBMapper dynamoDBMapper = managerClass.initDynamoClient(credentialsProvider);
-                dynamoDBMapper.save(accountsDo);
-
-            } else {
-                return ("2");
-
-            }
-
-            return ("1");
-        }
-
-        protected void onPostExecute(String string) {
-            super.onPostExecute(string);
-            if (string.equals("1")) {
-                Toast.makeText(Register.this, "Successful", Toast.LENGTH_SHORT).show();
-            } else if (string.equals("2")) {
-                Toast.makeText(Register.this, "Unsuccessful", Toast.LENGTH_SHORT).show();
-            }
-
-        }
-    }
 
 
 }

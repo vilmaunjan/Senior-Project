@@ -1,5 +1,6 @@
 package com.example.vilma.biometricrecognition;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
@@ -31,10 +32,9 @@ public class LoginActivity extends BaseActivity {
     EditText txtUsername;
 
 
+
 //    DynamoDBMapper dynamoDBMapper;
 //
-
-
 
 
     /*
@@ -61,7 +61,8 @@ public class LoginActivity extends BaseActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
-                new updateTable().execute();
+                DbManager.checkTable checkTable = new DbManager.checkTable(view.getContext(),(Activity) view.getContext());
+                checkTable.execute();
                 startActivity(intent);
             }
         });
@@ -76,45 +77,7 @@ public class LoginActivity extends BaseActivity {
         });
     }
 
-    private class updateTable extends AsyncTask<String, Void, String> {
 
-        @Override
-        protected String doInBackground(String... strings) {
-
-            ManagerClass managerClass = new ManagerClass();
-            CognitoCachingCredentialsProvider credentialsProvider = managerClass.getCredentials(LoginActivity.this);
-
-            AccountsDO accountsDo = new AccountsDO();
-            try{
-                accountsDo.setUserId(txtUsername.getText().toString());
-
-            }catch(Exception e){
-                Toast.makeText(LoginActivity.this, "something broke", Toast.LENGTH_LONG).show();
-            }
-
-            if (credentialsProvider != null && accountsDo != null) {
-
-                DynamoDBMapper dynamoDBMapper = managerClass.initDynamoClient(credentialsProvider);
-                dynamoDBMapper.save(accountsDo);
-
-            } else {
-                return ("2");
-
-            }
-
-            return ("1");
-        }
-
-        protected void onPostExecute(String string) {
-            super.onPostExecute(string);
-            if (string.equals("1")) {
-                Toast.makeText(LoginActivity.this, "Welcome", Toast.LENGTH_SHORT).show();
-            } else if (string.equals("2")) {
-                Toast.makeText(LoginActivity.this, "Login unsuccessful", Toast.LENGTH_SHORT).show();
-            }
-
-        }
-    }
 }
 
 

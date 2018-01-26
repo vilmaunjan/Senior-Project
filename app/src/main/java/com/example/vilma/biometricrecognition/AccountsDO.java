@@ -13,6 +13,10 @@ import java.util.Set;
 
 @DynamoDBTable(tableName = "biometricscanner-mobilehub-1770537756-Accounts")
 
+/*This class is the getter and setter for the app*/
+
+
+
 public class AccountsDO {
     private String _userId;
     private String _pic1;
@@ -20,7 +24,7 @@ public class AccountsDO {
     private Set<String> _picLog;
 
     @DynamoDBHashKey(attributeName = "userId")
-    @DynamoDBIndexHashKey(attributeName = "userId", globalSecondaryIndexName = "DateSorted")
+//    @DynamoDBIndexHashKey(attributeName = "userId", globalSecondaryIndexName = "DateSorted")
     public String getUserId() {
         return _userId;
     }
