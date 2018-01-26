@@ -25,11 +25,18 @@ import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
 /*
     All classes should extend BaseActivity to be able to see the toolbar
  */
+
+
+
 public class LoginActivity extends BaseActivity {
 
     Button btnLogin;
     TextView txtSignup;
     EditText txtUsername;
+
+    DbManager dBManager = new DbManager();
+
+
 
 
 
@@ -57,13 +64,31 @@ public class LoginActivity extends BaseActivity {
         txtSignup = (TextView) findViewById(R.id.txtSignup);
         txtUsername = (EditText) findViewById(R.id.txtUsername);
 
+
+
+
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
                 DbManager.checkTable checkTable = new DbManager.checkTable(view.getContext(),(Activity) view.getContext());
-                checkTable.execute();
-                startActivity(intent);
+                //Checking if username is empty or did not enter something valid
+                if (txtUsername.getText().toString().equals("") ||
+                        txtUsername.getText().toString().equals("Enter a Username")) {
+                    Toast.makeText(LoginActivity.this, "Please enter a valid username", Toast.LENGTH_LONG).show();
+
+                }else {
+                    checkTable.execute();
+                   
+                }
+                if(dBManager.getLoginFlag()){
+
+                    startActivity(intent);
+                }
+
+
+
+
             }
         });
 
