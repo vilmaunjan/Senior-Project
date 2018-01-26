@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-//@DynamoDBTable(tableName = "biometricscanner-mobilehub-1770537756-Accounts")
+@DynamoDBTable(tableName = "biometricscanner-mobilehub-1770537756-Accounts")
 
 public class AccountsDO {
     private String _userId;
@@ -19,8 +19,8 @@ public class AccountsDO {
     private String _pic2;
     private Set<String> _picLog;
 
-    //@DynamoDBHashKey(attributeName = "userId")
-    //@DynamoDBIndexHashKey(attributeName = "userId", globalSecondaryIndexName = "DateSorted")
+    @DynamoDBHashKey(attributeName = "userId")
+    @DynamoDBIndexHashKey(attributeName = "userId", globalSecondaryIndexName = "DateSorted")
     public String getUserId() {
         return _userId;
     }
@@ -28,7 +28,8 @@ public class AccountsDO {
     public void setUserId(final String _userId) {
         this._userId = _userId;
     }
-    //@DynamoDBAttribute(attributeName = "Pic1")
+
+    @DynamoDBAttribute(attributeName = "Pic1")
     public String getPic1() {
         return _pic1;
     }
@@ -36,7 +37,8 @@ public class AccountsDO {
     public void setPic1(final String _pic1) {
         this._pic1 = _pic1;
     }
-    //@DynamoDBAttribute(attributeName = "Pic2")
+
+    @DynamoDBAttribute(attributeName = "Pic2")
     public String getPic2() {
         return _pic2;
     }
@@ -44,7 +46,8 @@ public class AccountsDO {
     public void setPic2(final String _pic2) {
         this._pic2 = _pic2;
     }
-    //@DynamoDBAttribute(attributeName = "Pic_Log")
+
+    @DynamoDBAttribute(attributeName = "Pic_Log")
     public Set<String> getPicLog() {
         return _picLog;
     }

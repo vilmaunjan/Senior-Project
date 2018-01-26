@@ -28,6 +28,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.auth.CognitoCachingCredentialsProvider;
 import com.amazonaws.auth.PropertiesCredentials;
 import com.amazonaws.mobile.client.AWSMobileClient;
 import com.amazonaws.mobile.config.AWSConfiguration;
@@ -64,6 +65,9 @@ public class Register extends BaseActivity {
     Button btnRegister;
     ImageView mImageView;
     EditText txtUsername;
+
+
+    String Username;
     private String mCurrentPhotoPath = null;
     static final int REQUEST_IMAGE_CAPTURE = 1;
     // TAG for logging;
@@ -87,7 +91,6 @@ public class Register extends BaseActivity {
 
 
         transferUtility = Util.getTransferUtility(this);
-
         initUI();
     }
 
@@ -101,9 +104,10 @@ public class Register extends BaseActivity {
             @Override
             public void onClick(View view) {
                 boolean registerRequir = checkrequirements();
-                if(registerRequir){
-                       BeginUpload upload =  new BeginUpload(getApplicationContext(), mCurrentPhotoPath);
-                       upload.execute();
+                new updateTable().execute();
+                if (registerRequir) {
+                    BeginUpload upload = new BeginUpload(getApplicationContext(), mCurrentPhotoPath);
+                    upload.execute();
                 }
             }
         });
@@ -119,11 +123,11 @@ public class Register extends BaseActivity {
     }
 
     private boolean checkrequirements() {
-        if(txtUsername.getText().toString().equals("") ||
-                txtUsername.getText().toString().equals("Enter a Username")){
-            Toast.makeText(this,"Please enter a unique username", Toast.LENGTH_LONG).show();
+        if (txtUsername.getText().toString().equals("") ||
+                txtUsername.getText().toString().equals("Enter a Username")) {
+            Toast.makeText(this, "Please enter a unique username", Toast.LENGTH_LONG).show();
             return false;
-        }else{
+        } else {
             return true;
         }
     }
@@ -176,17 +180,15 @@ public class Register extends BaseActivity {
         switch (requestCode) {
             //checks to see if the activity is "all good"
 
-            case(REQUEST_IMAGE_CAPTURE):
-                {
+            case (REQUEST_IMAGE_CAPTURE): {
 
-                    if (resultCode == RESULT_OK) {
-                        setPic();
-                        btnTakePic.setText("Different Picture?");
-                    }
+                if (resultCode == RESULT_OK) {
+                    setPic();
+                    btnTakePic.setText("Different Picture?");
+                }
 
             }
-            case(2):
-                {
+            case (2): {
                     /*if (resultCode == Activity.RESULT_OK) {
 
                         //grabs the info from the intents data and set the uri to that data
@@ -205,12 +207,12 @@ public class Register extends BaseActivity {
                             Log.e(TAG, "Unable to upload file from the given uri", e);
                         }
                     }*/
-                    Toast.makeText(this, "hey", Toast.LENGTH_LONG);
+                Toast.makeText(this, "hey", Toast.LENGTH_LONG);
             }
         }
     }
 
-    private class BeginUpload extends AsyncTask<String, Void, String>{
+    private class BeginUpload extends AsyncTask<String, Void, String> {
 
         private Context mContext;
         private String filePath;
@@ -230,7 +232,7 @@ public class Register extends BaseActivity {
 
             //File file = new File(S3JavaSDKExample.class.getResource(fileName).toURI());
 
-            PutObjectRequest putRequest1 = new PutObjectRequest(Constants.BUCKET_NAME,txtUsername.getText().toString(),file);
+            PutObjectRequest putRequest1 = new PutObjectRequest(Constants.BUCKET_NAME, txtUsername.getText().toString(), file);
             PutObjectResult response1 = s3Client.putObject(putRequest1);
             return null;
         }
@@ -242,10 +244,12 @@ public class Register extends BaseActivity {
         }
 
         @Override
-        protected void onPreExecute() {}
+        protected void onPreExecute() {
+        }
 
         @Override
-        protected void onProgressUpdate(Void... values) {}
+        protected void onProgressUpdate(Void... values) {
+        }
         ///////////////////////////////////////FORTH ATTEMPT////////////////////////////////////////
         //the code below is an example
         /*BasicAWSCredentials awsCreds = new BasicAWSCredentials(Constants.ACCESS_KEY_ID,
@@ -261,8 +265,7 @@ public class Register extends BaseActivity {
 
     }
 
-    public static Bitmap RotateBitmap(Bitmap source, float angle)
-    {
+    public static Bitmap RotateBitmap(Bitmap source, float angle) {
         Matrix matrix = new Matrix();
         matrix.postRotate(angle);
         return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(), matrix, true);
@@ -281,7 +284,7 @@ public class Register extends BaseActivity {
         int photoH = bmOptions.outHeight;
 
         // Determine how much to scale down the image
-        int scaleFactor = Math.min(photoW/targetW, photoH/targetH);
+        int scaleFactor = Math.min(photoW / targetW, photoH / targetH);
 
         // Decode the image file into a Bitmap sized to fill the View
         bmOptions.inJustDecodeBounds = false;
@@ -289,7 +292,7 @@ public class Register extends BaseActivity {
         bmOptions.inPurgeable = true;
 
         Bitmap bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
-        bitmap = RotateBitmap(bitmap,270);
+        bitmap = RotateBitmap(bitmap, 270);
         mImageView.setImageBitmap(bitmap);
     }
 
@@ -321,7 +324,7 @@ public class Register extends BaseActivity {
                     uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
                 }
                 selection = "_id=?";
-                selectionArgs = new String[] {
+                selectionArgs = new String[]{
                         split[1]
                 };
             }
@@ -356,6 +359,48 @@ public class Register extends BaseActivity {
 
     public static boolean isMediaDocument(Uri uri) {
         return "com.android.providers.media.documents".equals(uri.getAuthority());
+    }
+
+
+    /*
+    * From here on is Database stuff
+    * */
+
+
+    private class updateTable extends AsyncTask<String, Void, String> {
+
+
+        @Override
+        protected String doInBackground(String... strings) {
+
+            ManagerClass managerClass = new ManagerClass();
+            CognitoCachingCredentialsProvider credentialsProvider = managerClass.getCredentials(Register.this);
+
+            AccountsDO accountsDo = new AccountsDO();
+            accountsDo.setUserId(txtUsername.getText().toString());
+
+            if (credentialsProvider != null && accountsDo != null) {
+
+                DynamoDBMapper dynamoDBMapper = managerClass.initDynamoClient(credentialsProvider);
+                dynamoDBMapper.save(accountsDo);
+
+            } else {
+                return ("2");
+
+            }
+
+            return ("1");
+        }
+
+        protected void onPostExecute(String string) {
+            super.onPostExecute(string);
+            if (string.equals("1")) {
+                Toast.makeText(Register.this, "Successful", Toast.LENGTH_SHORT).show();
+            } else if (string.equals("2")) {
+                Toast.makeText(Register.this, "Unsuccessful", Toast.LENGTH_SHORT).show();
+            }
+
+        }
     }
 
 

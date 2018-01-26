@@ -3,8 +3,8 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/BiometricRecognition.iml" filepath="$PROJECT_DIR$/BiometricRecognition.iml" />
-      <module fileurl="file://D:\Programming_languages\androidWorkspace\BiometricRecognition\BiometricRecognition.iml" filepath="D:\Programming_languages\androidWorkspace\BiometricRecognition\BiometricRecognition.iml" />
       <module fileurl="file://C:\Users\Vilma\Documents\FGCU\Spring 2018\Android Projects\BiometricRecognition\.idea\BiometricRecognition.iml" filepath="C:\Users\Vilma\Documents\FGCU\Spring 2018\Android Projects\BiometricRecognition\.idea\BiometricRecognition.iml" />
+      <module fileurl="file://D:\Programming_languages\androidWorkspace\BiometricRecognition\BiometricRecognition.iml" filepath="D:\Programming_languages\androidWorkspace\BiometricRecognition\BiometricRecognition.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>
