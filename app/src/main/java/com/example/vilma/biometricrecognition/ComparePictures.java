@@ -4,7 +4,9 @@ package com.example.vilma.biometricrecognition;
  * Created by Vilma on 1/21/2018.
  */
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.widget.Toast;
 
@@ -30,7 +32,7 @@ import com.amazonaws.services.s3.model.S3DataSource;
 
 import java.util.List;
 
-public class ComparePictures extends AsyncTask<Object, String, String> {
+public class ComparePictures extends AsyncTask<Object, String, Float> {
 
     private Context mContext;
     private String mSource;
@@ -40,25 +42,25 @@ public class ComparePictures extends AsyncTask<Object, String, String> {
     private static Float similarityThreshold = 80F;
     private static String bucket = Constants.BUCKET_NAME;
 
+    //LoginActivity mActivity;
+    TakePicFragment mObj;
+
 
     //String photo = "photo.jpg";
     //String source = "My_Face.jpg";
     //String source = "My_Face2.jpg";
 
     //Constructor
-    public ComparePictures(Context context, String source, String target){
+    public ComparePictures(Context context, String source, String target, TakePicFragment obj){
         mContext = context;
         mSource = source;
         mTarget = target;
-    }
-
-    //Getter to get the confidence
-    public Float getConfidence() {
-        return confidence;
+        //mActivity = activity;
+        mObj = obj;
     }
 
     @Override
-    protected String doInBackground(Object... params) {
+    protected Float doInBackground(Object... params) {
         //String source = (String)params[0];
         //String target = (String)params[1];
 
@@ -86,56 +88,13 @@ public class ComparePictures extends AsyncTask<Object, String, String> {
                     + " " + position.getTop()
                     + " matches with " + face.getConfidence().toString()
                     + "% confidence.");
-            //Toast.makeText(mContext,face.getConfidence().toString()+"% confidence.",Toast.LENGTH_SHORT).show();
         }
 
-        return null;
+        return confidence;
     }
 
-
-    protected void onPostExecute(String result) {
-        Toast toast = Toast.makeText(this.mContext, ""+confidence, Toast.LENGTH_SHORT);
-        toast.show();
+    protected void onPostExecute(Float result) {
+        //mActivity.onBackgroundRekogTaskCompleted(result);
+        mObj.onBackgroundRekogTaskCompleted(result);
     }
-/*
-    public static void comparePic(Context context, String source, String target) {
-
-        rekognitionClient = Util.getRekognitionClient(context);
-
-        CompareFacesRequest request = new CompareFacesRequest()
-                .withSourceImage(new Image()
-                        .withS3Object(new S3Object()
-                                .withName(source).withBucket(bucket)))
-                .withTargetImage(new Image()
-                        .withS3Object(new S3Object()
-                                .withName(target).withBucket(bucket)))
-                .withSimilarityThreshold(similarityThreshold);
-
-        // Call operation
-        CompareFacesResult compareFacesResult=rekognitionClient.compareFaces(request);
-
-        // Display results
-        List <CompareFacesMatch> faceDetails = compareFacesResult.getFaceMatches();
-        for (CompareFacesMatch match: faceDetails){
-            ComparedFace face= match.getFace();
-            BoundingBox position = face.getBoundingBox();
-            System.out.println("Face at " + position.getLeft().toString()
-                    + " " + position.getTop()
-                    + " matches with " + face.getConfidence().toString()
-                    + "% confidence.");
-            Toast.makeText(context,face.getConfidence().toString()+"% confidence.",Toast.LENGTH_SHORT).show();
-        }
-        List<ComparedFace> uncompared = compareFacesResult.getUnmatchedFaces();
-
-        System.out.println("There were " + uncompared.size()
-                + " that did not match");
-        System.out.println("Source image rotation: " + compareFacesResult.getSourceImageOrientationCorrection());
-        System.out.println("target image rotation: " + compareFacesResult.getTargetImageOrientationCorrection());
-
-
-        //Toast.makeText(context,"hi",Toast.LENGTH_SHORT).show();
-
-    }
-*/
-
 }

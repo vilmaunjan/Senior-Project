@@ -28,24 +28,17 @@ import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.PaginatedList;
 public class DbManager {
 
     public static String prime_pic;
-
-
     static Context currentContext;
 //    static Activity currentActivity;
-    public static boolean loginFlag =false;
 
 
+    //THS IS NOT USED AND DOESNT WORK
     public String getPrime_pic(){
         return getPrime_pic();
     }
-    public boolean getLoginFlag(){
-        return loginFlag;
-    }
-
 
     public static class createItem extends AsyncTask<String, Void, String> {
         String txtUsername;
-
 
         // Save the context received via constructor in a local variable
         // it also saves the activity of the current view
@@ -54,7 +47,6 @@ public class DbManager {
 //            txtUsername = (EditText) activity.findViewById(R.id.txtUsername);
             txtUsername = Username;
         }
-
 
         @Override
         protected String doInBackground(String... strings) {
@@ -76,19 +68,14 @@ public class DbManager {
             accountsDo.setPic1(txtUsername+"_prime.jpg");
 //            accountsDo.setPic1(txtUsername.getText().toString() + "_prime.jpg");
 
-
             // if the set Username does not match the database then it create new item
             if (!accountsDo.getUserId().equals(result.get(0).getUserId())) {
                 // it creates new item in DynamoDB
                 dynamoDBMapper.save(accountsDo);
                 return ("1");
-
             } else {
                 return ("2");
-
             }
-
-
         }
 
 
@@ -108,24 +95,26 @@ public class DbManager {
     }
 
 
-    public static class checkTable extends AsyncTask<String, Void, String> {
+    public static class checkTable extends AsyncTask<String, Void, Boolean> {
         String txtUsername;
+        public static boolean loginFlag;
+        TakePicFragment mObj; //Need to have this to pass the loginFlag to LoginActivity
 
-        // Save the context received via constructor in a local variable
-        // it also saves the activity of the current view
-
-        public checkTable(Context context, String Username) {
+        //Constructor
+        public checkTable(Context context, String Username, TakePicFragment obj) {
             currentContext = context;
 //            currentActivity = activity;
 //            txtUsername = (EditText) activity.findViewById(R.id.txtUsername);
             txtUsername = Username;
+            //mActivity = activity;
+            mObj = obj;
         }
 
-
         @Override
-        protected String doInBackground(String... strings) {
+        protected Boolean doInBackground(String... strings) {
 //            Looper.prepare();
 
+            //Get credentials from aws DynamoDB
             ManagerClass managerClass = new ManagerClass();
             CognitoCachingCredentialsProvider credentialsProvider = managerClass.getCredentials(currentContext);
             DynamoDBMapper dynamoDBMapper = managerClass.initDynamoClient(credentialsProvider);
@@ -142,31 +131,32 @@ public class DbManager {
 
             // if not in the database its going to ask to prompt again
             if (result.isEmpty()) {
-
-                return "unsuccessful";
+                loginFlag = false;
+                //return "unsuccessful";
             } else {
 
                DbManager.prime_pic =result.get(0).getPic1();
-
-                return "success";
+                loginFlag = true;
+                //return "success";
             }
+            return loginFlag;
 
         }
 
-        protected void onPostExecute(String result) {
-            super.onPostExecute(result);
-
+        protected void onPostExecute(Boolean result) {
+           mObj.onBackgroundDBTaskCompleted(result);
+/*
             // if not in the database its going to ask to prompt again
             if (result.equals("unsuccessful")) {
                 Toast.makeText(currentContext, "Please Enter A Valid UserName or Register", Toast.LENGTH_LONG).show();
-                loginFlag = false;
+                //loginFlag = false;
             } else if (result.equals("success")) {
 
                 Toast.makeText(currentContext, "Thank you", Toast.LENGTH_LONG).show();
-                loginFlag = true;
+                //loginFlag = true;
 
             }
-
+*/
         }
     }
 }

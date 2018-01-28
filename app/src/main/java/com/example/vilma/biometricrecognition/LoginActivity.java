@@ -22,6 +22,7 @@ import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
 
 import java.io.File;
+import java.util.concurrent.ExecutionException;
 
 /**
  * MAIN CLASS
@@ -36,7 +37,7 @@ public class LoginActivity extends BaseActivity implements TakePicFragment.Pictu
     String photoPath;
     TextView txtSignup;
     EditText txtUsernameBox;
-    String txtUsername = "";
+    String txtUsername;
     boolean registerRequir = false;
     TakePicFragment fragment = new TakePicFragment();
     String source;
@@ -88,40 +89,64 @@ public class LoginActivity extends BaseActivity implements TakePicFragment.Pictu
 
     //
     @Override
-    public void picClick(String photoPath, String txtUsername) {
-        this.photoPath = photoPath;
-        File file = new File(photoPath);
+    public void picClick(String photoPath, String txtUname) {
+
 
         //This requirSatisfied is passing the bool logic from the database
         // then the next iteration of if checks if the picture that was taken does meet reqs
         //if fragment.requirSatisfied = true means the user is in the db
-        if (fragment.requirSatisfied) {
-            source = txtUsername + "_prime.jpg";
-            target = txtUsername + file.getName();
-            S3Upload upload = new S3Upload(getApplicationContext(), photoPath,
-                    txtUsername + "_" + file.getName());
-            upload.execute();
-            comparePic(LoginActivity.this);
-        }
+        //if (fragment.requirSatisfied) { //If user is in the db
+        //    this.photoPath = photoPath;
+        //    File file = new File(photoPath);
+        //    source = txtUname + "_prime.jpg";
+        //   target = txtUname +"_" +file.getName();
+        //    S3Upload upload = new S3Upload(getApplicationContext(), photoPath, target);
+        //    upload.execute();
+            //comparePic(LoginActivity.this);
+        //}
+
     }
 
     /*
      *This method call ComparesPicture and if the accuracy is greater or equal than 80 it proceeds
      * to login, otherwise should prompt a toast message that login failed.
      */
-    public void comparePic(Context context) {
+    /*public void comparePic(Context context) {
 
-        ComparePictures j = new ComparePictures(context, source, target);
+        ComparePictures j = new ComparePictures(context, "My_Face.jpg", "My_Face2.jpg",this);
         j.execute();
+    }
+*/
+    /*
+    public void onBackgroundRekogTaskCompleted(Float result){
+        final Float THRESHOLD = 80F;
 
-        if (j.getConfidence() >= 80) {
-            Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
-            startActivity(intent);
+         //*For some reason, it doesnt let me assign "result" to the confidence variable inside this
+         //* method. So the only way to use the result value passed from ComparePictures is inside of
+         //* this method. That is why I have to do the confidence check here.
+         //*
+        if (result >= THRESHOLD) {
+            //flag = "Greater than 80!";
+            Intent intent = new Intent(this, HomeActivity.class);
+            this.startActivity(intent);
+            Toast.makeText(this,
+                    "lOGING IN!!!", Toast.LENGTH_SHORT).show();
         } else {
-            Toast.makeText(context,
-                    "Please enter a valid picture", Toast.LENGTH_SHORT).show();
+            //flag = "Less than 80!";
+            Toast.makeText(this,
+                    "CANNOT LOGIN!!!", Toast.LENGTH_SHORT).show();
         }
     }
+
+    public void onBackgroundDBTaskCompleted(Boolean result){
+        if (result == true){ //User exists in database
+            comparePic(LoginActivity.this);
+        }else{ //when result==false, user does not exist in database
+
+        }
+    }
+
+    */
 }
 
 

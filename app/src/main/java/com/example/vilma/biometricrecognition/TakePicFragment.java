@@ -97,13 +97,13 @@ public class TakePicFragment extends Fragment{
     public void buttonClicked(View view){
         userName = picCommander.getTxt();
         checkTable(context, getActivity(), userName);
-//        if(requirSatisfied) {
-            dispatchTakePictureIntent();
-            picCommander.picClick(fragPhotoFilePath, userName);
-            picButton.setText("Different Picture?");
-//        }else{
-//            Toast.makeText(getActivity(), "Please choose a different username", Toast.LENGTH_LONG).show();
-//        }
+        //if(requirSatisfied) {
+        //    dispatchTakePictureIntent();
+        //    picCommander.picClick(fragPhotoFilePath, userName);
+        //    picButton.setText("Different Picture?");
+        //}else{
+        //    Toast.makeText(getActivity(), "Please choose a different username", Toast.LENGTH_LONG).show();
+        //}
     }
 
     //this method checks to see if there is available external storage
@@ -167,19 +167,63 @@ public class TakePicFragment extends Fragment{
             }
         }
     }
-
+    /**DONT NEED THIS METHOD CAUSE IT IS DONE IN DBManager.java, cannot be done in this class
+     * because DbManager.checkTable is an AsyncTask. It can be erased.
+     */
     public void checkTable(Context context, Activity activity, String txtUsername) {
-        DbManager.checkTable checkTable = new DbManager.checkTable(context, txtUsername);
-        //Checking if username is empty or did not enter something valid
+        DbManager.checkTable checkTable = new DbManager.checkTable(context, txtUsername,this);
+
+       //If none/wrong input
         if (txtUsername.equals("") || txtUsername.toString().equals("Enter a Username")) {
             Toast.makeText(context, "Please enter a valid username", Toast.LENGTH_LONG).show();
-        } else {
+        } else { //Else If the user entered something in the text box
             checkTable.execute();
         }
+    }
+    /** This method receives the confidence value from ComparePictures class. The loginIntent has
+     * to be done in this class because the confidence("result") cannot be passed to another class.
+     */
+    public void onBackgroundRekogTaskCompleted(Float result){
+        final Float THRESHOLD = 80F;
 
-        if (dBManager.getLoginFlag()) {
-            requirSatisfied = true;
+        /*For some reason, it doesnt let me assign "result" to the confidence variable inside this
+         * method. So the only way to use the result value passed from ComparePictures is inside of
+         * this method. That is why I have to do the confidence check here.*/
+        if (0 >= THRESHOLD) {
+            //flag = "Greater than 80!";
+            Intent loginIntent = new Intent(context, HomeActivity.class);
+            this.startActivity(loginIntent);
+            Toast.makeText(context,"LOGGING IN!!!", Toast.LENGTH_SHORT).show();
+        } else {
+            //flag = "Less than 80!";
+            Toast.makeText(context,"CANNOT LOGIN!!!", Toast.LENGTH_SHORT).show();
+        }
+    }
 
+    public void onBackgroundDBTaskCompleted(Boolean result){
+        if (result == true){ //User exists in database, at Login Activity
+            //Take the login picture
+            dispatchTakePictureIntent();
+            picButton.setText("Different Picture?");
+
+            //Store in s3
+            File file = new File(fragPhotoFilePath);
+            String source = userName + "_prime.jpg";
+            String target = userName +"_" +file.getName();
+            S3Upload upload = new S3Upload(context, fragPhotoFilePath, target);
+            upload.execute();
+
+
+            //Compares pictures and also calls onBackgroundRekogTaskCompleted() automatically
+            ComparePictures j = new ComparePictures(context, "My_Face.jpg", "My_Face2.jpg",this);
+            j.execute();
+            Toast.makeText(context,"context: "+context, Toast.LENGTH_SHORT).show();
+        }else{ //when result==false, user does not exist in database
+            //if is in login page
+            //if(context==LoginActivity.this)
+                Toast.makeText(getActivity(), "Please choose a different username", Toast.LENGTH_LONG).show();
+            //Else if it is in register page
+                //Create account
         }
     }
 

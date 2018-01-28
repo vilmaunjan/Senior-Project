@@ -38,8 +38,8 @@ public class HomeActivity extends BaseActivity {
         btnCheckout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ComparePictures j = new ComparePictures(HomeActivity.this,"My_Face.jpg", "My_Face2.jpg");
-                j.execute();
+                //ComparePictures j = new ComparePictures(HomeActivity.this,"My_Face.jpg", "My_Face2.jpg");
+                //j.execute();
                 //ComparePictures.comparePic(HomeActivity.this,"My_Face.jpg", "My_Face2.jpg");
             }
         });
