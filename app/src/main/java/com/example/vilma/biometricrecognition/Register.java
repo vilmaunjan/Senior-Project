@@ -67,11 +67,13 @@ public class Register extends BaseActivity implements TakePicFragment.PictureTak
     //grabs the photopath from the TakePicFragment and sets pic
     @Override
     public void picClick(String mCurrentPhotoPath, String txtUsername) {
-        this.mCurrentPhotoPath = mCurrentPhotoPath;
+     /*   this.mCurrentPhotoPath = mCurrentPhotoPath;
         S3Upload upload =  new S3Upload(getApplicationContext(), mCurrentPhotoPath,
                 txtUsername + "_prime.jpg");
         upload.execute();
-        setPic();
+     */
+     //this.mCurrentPhotoPath = mCurrentPhotoPath;
+     //setPic();
     }
 
     //rotates the pic depending on the float you send it

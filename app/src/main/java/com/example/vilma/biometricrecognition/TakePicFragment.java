@@ -89,7 +89,6 @@ public class TakePicFragment extends Fragment{
                     }
                 }
         );
-
         return view;
     }
 
@@ -97,6 +96,7 @@ public class TakePicFragment extends Fragment{
     public void buttonClicked(View view){
         userName = picCommander.getTxt();
         checkTable(context, getActivity(), userName);
+        picCommander.picClick(fragPhotoFilePath, userName);
         //if(requirSatisfied) {
         //    dispatchTakePictureIntent();
         //    picCommander.picClick(fragPhotoFilePath, userName);
@@ -167,9 +167,7 @@ public class TakePicFragment extends Fragment{
             }
         }
     }
-    /**DONT NEED THIS METHOD CAUSE IT IS DONE IN DBManager.java, cannot be done in this class
-     * because DbManager.checkTable is an AsyncTask. It can be erased.
-     */
+
     public void checkTable(Context context, Activity activity, String txtUsername) {
         DbManager.checkTable checkTable = new DbManager.checkTable(context, txtUsername,this);
 
@@ -189,42 +187,65 @@ public class TakePicFragment extends Fragment{
         /*For some reason, it doesnt let me assign "result" to the confidence variable inside this
          * method. So the only way to use the result value passed from ComparePictures is inside of
          * this method. That is why I have to do the confidence check here.*/
-        if (0 >= THRESHOLD) {
+        if (result >= THRESHOLD) {
             //flag = "Greater than 80!";
             Intent loginIntent = new Intent(context, HomeActivity.class);
             this.startActivity(loginIntent);
-            Toast.makeText(context,"LOGGING IN!!!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context,"SUCCESSFULLY LOGGED IN!!!", Toast.LENGTH_SHORT).show();
         } else {
             //flag = "Less than 80!";
-            Toast.makeText(context,"CANNOT LOGIN!!!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context,"CANNOT LOGIN, PICTURE DOESNT MATCH!!!", Toast.LENGTH_SHORT).show();
         }
     }
 
     public void onBackgroundDBTaskCompleted(Boolean result){
         if (result == true){ //User exists in database, at Login Activity
-            //Take the login picture
-            dispatchTakePictureIntent();
-            picButton.setText("Different Picture?");
 
-            //Store in s3
-            File file = new File(fragPhotoFilePath);
-            String source = userName + "_prime.jpg";
-            String target = userName +"_" +file.getName();
-            S3Upload upload = new S3Upload(context, fragPhotoFilePath, target);
-            upload.execute();
+            if(context instanceof LoginActivity){//if is in login page
+                //Take the login picture
+                dispatchTakePictureIntent();
+                picButton.setText("Different Picture?");
 
+                //Store in s3
+                File file = new File(fragPhotoFilePath);
+                String source = userName + "_prime.jpg";
+                String target = userName +"_" +file.getName();
+                S3Upload upload = new S3Upload(context, fragPhotoFilePath, target);
+                upload.execute();
 
-            //Compares pictures and also calls onBackgroundRekogTaskCompleted() automatically
-            ComparePictures j = new ComparePictures(context, "My_Face.jpg", "My_Face2.jpg",this);
-            j.execute();
-            Toast.makeText(context,"context: "+context, Toast.LENGTH_SHORT).show();
+                //Compares pictures and also calls onBackgroundRekogTaskCompleted() automatically
+                ComparePictures j = new ComparePictures(context, source, target,this);
+                j.execute();
+
+            } else if(context instanceof Register){ //if it is in register page
+                Toast.makeText(getActivity(), "USE ANOTHER USERNAME!", Toast.LENGTH_LONG).show();
+            }
+
         }else{ //when result==false, user does not exist in database
-            //if is in login page
-            //if(context==LoginActivity.this)
-                Toast.makeText(getActivity(), "Please choose a different username", Toast.LENGTH_LONG).show();
-            //Else if it is in register page
-                //Create account
+
+            if(context instanceof LoginActivity){//if is in login page
+                //Wrong username, stay in this page
+                Toast.makeText(getActivity(), "NOT IN DB, TRY AGAIN!", Toast.LENGTH_LONG).show();
+
+            } else if (context instanceof Register) { //Else if it is in register page, go ahead and create the account
+                //Store username in db
+                DbManager.createItem createItem = new DbManager.createItem(context, userName);
+                createItem.execute();
+
+                //Take the register picture
+                dispatchTakePictureIntent();
+                picButton.setText("Different Picture?");
+
+                //Store in s3
+                String source = userName + "_prime.jpg";
+                S3Upload upload = new S3Upload(context, fragPhotoFilePath, source);
+                upload.execute();
+                Toast.makeText(getActivity(), "REGISTRATION SUCCEED, NOW TRY TO LOGIN", Toast.LENGTH_LONG).show();
+
+                //After taking register pic and storing it in s3, go to Login activity
+                Intent intent = new Intent(context, LoginActivity.class);
+                this.startActivity(intent);
+            }
         }
     }
-
 }
