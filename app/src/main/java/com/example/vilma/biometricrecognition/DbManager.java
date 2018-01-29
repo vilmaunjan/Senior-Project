@@ -14,6 +14,8 @@ import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBMapper;
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBQueryExpression;
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.PaginatedList;
 
+import java.util.concurrent.ExecutionException;
+
 /**
  * Created by root on 1/25/18.
  */
@@ -109,7 +111,13 @@ public class DbManager {
         }
 
         protected void onPostExecute(Boolean result) {
-           mObj.onBackgroundDBTaskCompleted(result);
+            try {
+                mObj.onBackgroundDBTaskCompleted(result);
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 }

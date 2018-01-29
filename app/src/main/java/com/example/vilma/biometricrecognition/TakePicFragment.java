@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.concurrent.ExecutionException;
 
 public class TakePicFragment extends Fragment{
 
@@ -198,7 +199,7 @@ public class TakePicFragment extends Fragment{
         }
     }
 
-    public void onBackgroundDBTaskCompleted(Boolean result){
+    public void onBackgroundDBTaskCompleted(Boolean result) throws ExecutionException, InterruptedException {
         if (result == true){ //User exists in database, at Login Activity
 
             if(context instanceof LoginActivity){//if is in login page
@@ -211,7 +212,7 @@ public class TakePicFragment extends Fragment{
                 String source = userName + "_prime.jpg";
                 String target = userName +"_" +file.getName();
                 S3Upload upload = new S3Upload(context, fragPhotoFilePath, target);
-                upload.execute();
+                upload.execute().get();
 
                 //Compares pictures and also calls onBackgroundRekogTaskCompleted() automatically
                 ComparePictures j = new ComparePictures(context, source, target,this);
@@ -239,7 +240,7 @@ public class TakePicFragment extends Fragment{
                 //Store in s3
                 String source = userName + "_prime.jpg";
                 S3Upload upload = new S3Upload(context, fragPhotoFilePath, source);
-                upload.execute();
+                upload.execute().get();
                 Toast.makeText(getActivity(), "REGISTRATION SUCCEED, NOW TRY TO LOGIN", Toast.LENGTH_LONG).show();
 
                 //After taking register pic and storing it in s3, go to Login activity
