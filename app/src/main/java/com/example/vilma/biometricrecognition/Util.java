@@ -4,6 +4,7 @@ package com.example.vilma.biometricrecognition;
  * Created by Vilma on 1/21/2018.
  */
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -30,6 +31,7 @@ import java.util.Date;
 import java.util.Map;
 import java.util.UUID;
 
+import static android.support.v4.app.ActivityCompat.startActivityForResult;
 import static android.support.v4.content.ContextCompat.startActivity;
 
 /*
@@ -174,7 +176,7 @@ public class Util {
         map.put("percentage", progress + "%");
     }
 
-    public static String dispatchTakePictureIntent(Context context) {
+    public static String dispatchTakePictureIntent(Context context, Activity activity) {
         String fragPhotoFile;
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         // Ensure that there's a camera activity to handle the intent
@@ -195,7 +197,6 @@ public class Util {
                        "com.example.vilma.biometricrecognition.fileprovider",
                         photoFile);
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                startActivity(context, takePictureIntent, null);
 
                 return fragPhotoFile;
             }

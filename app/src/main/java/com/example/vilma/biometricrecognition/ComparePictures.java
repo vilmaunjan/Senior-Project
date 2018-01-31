@@ -42,21 +42,15 @@ public class ComparePictures extends AsyncTask<Object, String, Float> {
     private static Float similarityThreshold = 80F;
     private static String bucket = Constants.BUCKET_NAME;
 
-    //LoginActivity mActivity;
-    TakePicFragment mObj;
-
-
-    //String photo = "photo.jpg";
-    //String source = "My_Face.jpg";
-    //String source = "My_Face2.jpg";
+    LoginActivity mActivity;
 
     //Constructor
-    public ComparePictures(Context context, String source, String target, TakePicFragment obj){
+    public ComparePictures(Context context, String source, String target, LoginActivity activity){
         mContext = context;
+
         mSource = source;
         mTarget = target;
-        //mActivity = activity;
-        mObj = obj;
+        this.mActivity = activity;
     }
 
     @Override
@@ -94,7 +88,6 @@ public class ComparePictures extends AsyncTask<Object, String, Float> {
     }
 
     protected void onPostExecute(Float result) {
-        //mActivity.onBackgroundRekogTaskCompleted(result);
-        //mObj.onBackgroundRekogTaskCompleted(result);
+        mActivity.compareFinish(result);
     }
 }

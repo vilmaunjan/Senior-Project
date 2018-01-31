@@ -26,6 +26,8 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import static android.app.Activity.RESULT_OK;
+
 public class TakePicFragment<T> extends Fragment{
 
     //I dont think we need this
@@ -45,6 +47,8 @@ public class TakePicFragment<T> extends Fragment{
     boolean mExternalStorageWriteable = false;
     //database stuff
     DbManager dBManager = new DbManager();
+
+    static final int REQUEST_IMAGE_CAPTURE = 1;
 
     //I dont think I need this
     //makes sure that the activity that this fragment is in checks the requirements before taking a pic
@@ -91,56 +95,70 @@ public class TakePicFragment<T> extends Fragment{
     //I think you can
     public void buttonClicked(View view){
         userName = picCommander.getTxt();
-        fragPhotoFilePath = Util.dispatchTakePictureIntent(context);
-        picCommander.picClick(fragPhotoFilePath, userName);
-        /*checkTable(context, getActivity(), userName);
-        if(requirSatisfied){
-            fragPhotoFilePath = Util.dispatchTakePictureIntent(context);
-            picCommander.picClick(fragPhotoFilePath, userName);
+        dispatchTakePictureIntent(context);
+    }
+
+    public void dispatchTakePictureIntent(Context context) {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
+        // Ensure that there's a camera activity to handle the intent
+        if (takePictureIntent.resolveActivity(context.getPackageManager()) != null) {
+            // Create the File where the photo should go
+            //initializes a File object
+            File photoFile = null;
+            try {
+                //creates an empty file in the enviroments photo directory.
+                photoFile = createImageFile(context);
+            } catch (IOException ex) {
+                Toast.makeText(context, "dispatch pic error", Toast.LENGTH_SHORT).show();
+            }// Continue only if the File was successfully created
+            if (photoFile != null) {
+                //creates a Uri(a string of characters used to identify the file
+                Uri photoURI = FileProvider.getUriForFile(context,
+                        "com.example.vilma.biometricrecognition.fileprovider",
+                        photoFile);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                picCommander.picClick(fragPhotoFilePath,userName);
+                getActivity().startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+            }
+        }
+    }
+
+    private File createImageFile(Context context) throws IOException {
+        // Create an image file name
+        //String fragPhotoFilePath;
+        boolean mExternalStorageWriteable = false;
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        mExternalStorageWriteable = isExternalStorageMounted();
+
+        if(mExternalStorageWriteable) {
+            File storageDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+            //Creates an empty file in the default temporary-file directory, using the given prefix and
+            //suffix to generate its name
+            File image = File.createTempFile(
+                    imageFileName,   //prefix
+                    ".jpg",          //suffix
+                    storageDir       //directory
+            );
+
+            // Save a file: path for use with ACTION_VIEW intents
+            fragPhotoFilePath = image.getAbsolutePath();
+            return image;
         }else{
-            Toast.makeText(context, "Please enter a unique username", Toast.LENGTH_LONG).show();
-        }
-        */
-    }
-
-    public void initializeResult(Boolean result){
-        requirSatisfied = result;
-    }
-
-
-    /** This method receives the confidence value from ComparePictures class. The loginIntent has
-     * to be done in this class because the confidence("result") cannot be passed to another class.
-     */
-
-
-    public void uploadAndCompare(String uploadFile) {
-
-        picButton.setText("Different Picture?");
-        fragPhotoFilePath = uploadFile;
-        String source = userName + "_prime.jpg";
-        if (context instanceof LoginActivity){
-            //Store in S3
-            File file = new File(fragPhotoFilePath);
-            String target = userName + "_" + file.getName();
-            S3Upload uploadL = new S3Upload(context, fragPhotoFilePath, target);
-            uploadL.execute();
-
-            //Compares pictures and also calls onBackgroundRekogTaskCompleted() automatically
-            ComparePictures j = new ComparePictures(context, source, target, this);
-            j.execute();
-
-    }else{
-            //Store in s3
-            S3Upload uploadR = new S3Upload(context, fragPhotoFilePath, source);
-            uploadR.execute();
-            Toast.makeText(getActivity(), "REGISTRATION SUCCEED, NOW TRY TO LOGIN", Toast.LENGTH_LONG).show();
-
-            //After taking register pic and storing it in s3, go to Login activity
-            Intent intent = new Intent(context, LoginActivity.class);
-            this.startActivity(intent);
-
+            Toast.makeText(context, "External memory isn't writeable", Toast.LENGTH_LONG).show();
+            return null;
         }
     }
+
+    public static boolean isExternalStorageMounted() {
+        String state = Environment.getExternalStorageState();
+        if (Environment.MEDIA_MOUNTED.equals(state)) {
+            return true;
+        }
+        return false;
+    }
+
 
 
 

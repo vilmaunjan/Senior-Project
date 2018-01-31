@@ -66,7 +66,10 @@ public class DbManager {
             return null;
         }
 
-        protected void onPostExecute(Boolean result) {}
+        protected void onPostExecute(Boolean result) {
+            Toast toast = Toast.makeText(currentContext, "Upload to db complete", Toast.LENGTH_SHORT);
+            toast.show();
+        }
     }
 
 
@@ -117,6 +120,8 @@ public class DbManager {
         }
 
         protected void onPostExecute(Boolean result) {
+            Toast toast = Toast.makeText(currentContext, "check complete", Toast.LENGTH_SHORT);
+            toast.show();
             if(rObj != null){
                 rObj.initializeResult(result);
             }
