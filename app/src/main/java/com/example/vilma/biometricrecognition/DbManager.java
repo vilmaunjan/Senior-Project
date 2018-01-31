@@ -73,13 +73,19 @@ public class DbManager {
     public static class checkTable extends AsyncTask<String, Void, Boolean> {
         String txtUsername;
         public static boolean loginFlag;
-        TakePicFragment mObj; //Need to have this to pass the loginFlag to LoginActivity
-
+        LoginActivity lObj = null; //Need to have this to pass the loginFlag to LoginActivity
+        Register rObj = null;
         //Constructor
-        public checkTable(Context context, String Username, TakePicFragment obj) {
+        public checkTable(Context context, String Username, Register obj) {
             currentContext = context;
             txtUsername = Username;
-            mObj = obj;
+            rObj = obj;
+        }
+
+        public checkTable(Context context, String Username, LoginActivity obj) {
+            currentContext = context;
+            txtUsername = Username;
+            lObj = obj;
         }
 
         @Override
@@ -111,12 +117,11 @@ public class DbManager {
         }
 
         protected void onPostExecute(Boolean result) {
-            try {
-                mObj.onBackgroundDBTaskCompleted(result);
-            } catch (ExecutionException e) {
-                e.printStackTrace();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            if(rObj != null){
+                rObj.initializeResult(result);
+            }
+            if(lObj != null){
+                lObj.initializeResult(result);
             }
         }
     }

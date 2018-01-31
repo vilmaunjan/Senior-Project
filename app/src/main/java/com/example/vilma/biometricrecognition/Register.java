@@ -1,7 +1,10 @@
 package com.example.vilma.biometricrecognition;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.ContentUris;
+import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -21,6 +24,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import java.net.URISyntaxException;
+import java.util.concurrent.ExecutionException;
 
 
 //All classes should extend BaseActivity to be able to see the toolbar
@@ -29,10 +33,9 @@ public class Register extends BaseActivity implements TakePicFragment.PictureTak
     ImageView mImageView;
     EditText txtUsernameBox;
     String txtUsername;
-    private String mCurrentPhotoPath = null;
-    boolean registerRequir = false;
-    //the fragment
-    //checks if the register requirements have been verified
+    Button btnRegister;
+    private String fragPhotoFilePath = null;
+    boolean requirSatisfied;
 
 
     @Override  //calls this method immediately when this activity is called
@@ -46,67 +49,74 @@ public class Register extends BaseActivity implements TakePicFragment.PictureTak
     private void initUI() {
         mImageView = (ImageView) findViewById(R.id.image_view);
         txtUsernameBox = (EditText) findViewById(R.id.txtUsername);
+        btnRegister = (Button) findViewById(R.id.btnRegister);
 
-        txtUsernameBox.addTextChangedListener(new TextWatcher() {
-            public void afterTextChanged(Editable s) {
-                    txtUsername = txtUsernameBox.getText().toString();
+        btnRegister.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View v) {
+                //this method does like pretty much all the work....like seriously-_-
+                tryToUpload(v);
             }
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-            public void onTextChanged(CharSequence s, int start, int before, int count) {}
         });
 
-        //Bundle args = new Bundle();
-        //args.putString("Username", txtUsername);
-        //frag.setArguments(args);
+    }
+
+    private void tryToUpload(View v) {
+        if(fragPhotoFilePath != null){
+            txtUsername = txtUsernameBox.getText().toString();
+            checkTable(this,this,txtUsername);
+            if(requirSatisfied){
+                Toast.makeText(this, "Please enter a unique username", Toast.LENGTH_LONG).show();
+            }else{
+                DbManager.createItem createItem = new DbManager.createItem(this, txtUsername);
+                createItem.execute();
+
+                String source = txtUsername + "_prime.jpg";
+                S3Upload upload = new S3Upload(this, fragPhotoFilePath, source);
+                upload.execute();
+                //Toast.makeText(this, "Check everything bud i think you did it", Toast.LENGTH_LONG).show();
+            }
+        }else{
+            Toast.makeText(this, "Please take a picture first and enter a username!", Toast.LENGTH_LONG).show();
+        }
     }
 
     @Override
     public String getTxt(){
-        return txtUsername;
+        return txtUsername= txtUsernameBox.getText().toString();
     }
     //grabs the photopath from the TakePicFragment and sets pic
     @Override
-    public void picClick(String mCurrentPhotoPath, String txtUsername) {
-     /*   this.mCurrentPhotoPath = mCurrentPhotoPath;
-        S3Upload upload =  new S3Upload(getApplicationContext(), mCurrentPhotoPath,
-                txtUsername + "_prime.jpg");
-        upload.execute();
-     */
-     //this.mCurrentPhotoPath = mCurrentPhotoPath;
-     //setPic();
+    public void picClick(String fragPhotoFilePath, String txtUsername) {
+        this.txtUsername = txtUsername;
+        this.fragPhotoFilePath = fragPhotoFilePath;
+        //Toast.makeText(this, "we did it", Toast.LENGTH_SHORT).show();
     }
 
-    //rotates the pic depending on the float you send it
-    public static Bitmap RotateBitmap(Bitmap source, float angle)
-    {
-        Matrix matrix = new Matrix();
-        matrix.postRotate(angle);
-        return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(), matrix, true);
+    public void checkTable(Context context, Activity activity, String txtUsername) {
+        DbManager.checkTable checkTable = new DbManager.checkTable(this, txtUsername,this);
+
+        //If none/wrong input
+        if (txtUsername.equals("") || txtUsername.toString().equals("Enter a Username")) {
+            Toast.makeText(context, "Please enter a valid username", Toast.LENGTH_LONG).show();
+        } else { //Else If the user entered something in the text box
+            checkTable.execute();
+        }
+        try {
+            checkTable.get();
+        } catch (InterruptedException e) {
+            Toast.makeText(this, "shit we broke it", Toast.LENGTH_LONG).show();
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            Toast.makeText(this, "shit we broke it", Toast.LENGTH_LONG).show();
+            e.printStackTrace();
+        }
     }
 
-    //sets the picture depending on the mCurrentPhoto
-    private void setPic() {
-        // Get the dimensions of the View
-        int targetW = mImageView.getWidth();
-        int targetH = mImageView.getHeight();
-
-        // Get the dimensions of the bitmap
-        BitmapFactory.Options bmOptions = new BitmapFactory.Options();
-        bmOptions.inJustDecodeBounds = true;
-        BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
-        int photoW = bmOptions.outWidth;
-        int photoH = bmOptions.outHeight;
-
-        // Determine how much to scale down the image
-        int scaleFactor = Math.min(photoW/targetW, photoH/targetH);
-
-        // Decode the image file into a Bitmap sized to fill the View
-        bmOptions.inJustDecodeBounds = false;
-        bmOptions.inSampleSize = scaleFactor;
-        bmOptions.inPurgeable = true;
-
-        Bitmap bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
-        bitmap = RotateBitmap(bitmap,270);
-        mImageView.setImageBitmap(bitmap);
+    public void initializeResult(Boolean result){
+        requirSatisfied = result;
     }
+
+
 }

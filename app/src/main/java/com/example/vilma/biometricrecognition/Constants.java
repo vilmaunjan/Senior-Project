@@ -48,11 +48,11 @@ public class Constants {
     /*
      * S3 user access id
      */
-    public static final String ACCESS_KEY_ID = "AKIAJKUYSU7OYFZDQBJA";
+    public static final String ACCESS_KEY_ID = "AKIAITRXV5LGITQNMBAA";
 
     /*
      * s3 user SECRET access key
      */
-    public static final String SECRET_ACCESS_KEY_= "UuFAU/G4/u4/kFwQlDTHXFSZemOssQaqrgugn6BH";
+    public static final String SECRET_ACCESS_KEY_= "MjP7bQX18h6DkeKzBXOmwjC9W+BLmYYxCME5hFiq";
 
 }

@@ -95,6 +95,6 @@ public class ComparePictures extends AsyncTask<Object, String, Float> {
 
     protected void onPostExecute(Float result) {
         //mActivity.onBackgroundRekogTaskCompleted(result);
-        mObj.onBackgroundRekogTaskCompleted(result);
+        //mObj.onBackgroundRekogTaskCompleted(result);
     }
 }

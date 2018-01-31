@@ -38,7 +38,7 @@ public class LoginActivity extends BaseActivity implements TakePicFragment.Pictu
     TextView txtSignup;
     EditText txtUsernameBox;
     String txtUsername;
-    boolean registerRequir = false;
+    boolean requirSatisfied;
     TakePicFragment fragment = new TakePicFragment();
     String source;
     String target;
@@ -147,6 +147,10 @@ public class LoginActivity extends BaseActivity implements TakePicFragment.Pictu
     }
 
     */
+    public void initializeResult(Boolean result){
+        requirSatisfied = result;
+    }
+
 }
 
 

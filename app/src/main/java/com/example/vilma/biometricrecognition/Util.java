@@ -5,7 +5,12 @@ package com.example.vilma.biometricrecognition;
  */
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
+import android.os.Environment;
+import android.provider.MediaStore;
+import android.support.v4.content.FileProvider;
+import android.widget.Toast;
 
 import com.amazonaws.auth.CognitoCachingCredentialsProvider;
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferObserver;
@@ -20,8 +25,12 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Map;
 import java.util.UUID;
+
+import static android.support.v4.content.ContextCompat.startActivity;
 
 /*
  * Handles basic helper functions used throughout the app.
@@ -164,4 +173,70 @@ public class Util {
         map.put("state", observer.getState());
         map.put("percentage", progress + "%");
     }
+
+    public static String dispatchTakePictureIntent(Context context) {
+        String fragPhotoFile;
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        // Ensure that there's a camera activity to handle the intent
+        if (takePictureIntent.resolveActivity(context.getPackageManager()) != null) {
+            // Create the File where the photo should go
+            //initializes a File object
+            File photoFile = null;
+            try {
+                //creates an empty file in the enviroments photo directory.
+                photoFile = createImageFile(context);
+            } catch (IOException ex) {
+                Toast.makeText(context, "dispatch pic error", Toast.LENGTH_SHORT).show();
+            }// Continue only if the File was successfully created
+            if (photoFile != null) {
+                fragPhotoFile = photoFile.getAbsolutePath();
+                //creates a Uri(a string of characters used to identify the file
+                Uri photoURI = FileProvider.getUriForFile(context,
+                       "com.example.vilma.biometricrecognition.fileprovider",
+                        photoFile);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                startActivity(context, takePictureIntent, null);
+
+                return fragPhotoFile;
+            }
+        }
+        return null;
+    }
+
+    private static File createImageFile(Context context) throws IOException {
+        // Create an image file name
+        //String fragPhotoFilePath;
+        boolean mExternalStorageWriteable = false;
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        mExternalStorageWriteable = isExternalStorageMounted();
+
+        if(mExternalStorageWriteable) {
+            File storageDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+            //Creates an empty file in the default temporary-file directory, using the given prefix and
+            //suffix to generate its name
+            File image = File.createTempFile(
+                    imageFileName,   //prefix
+                    ".jpg",          //suffix
+                    storageDir       //directory
+            );
+
+            // Save a file: path for use with ACTION_VIEW intents
+            //fragPhotoFilePath = image.getAbsolutePath();
+            return image;
+        }else{
+            Toast.makeText(context, "External memory isn't writeable", Toast.LENGTH_LONG).show();
+            return null;
+        }
+    }
+
+    public static boolean isExternalStorageMounted() {
+        String state = Environment.getExternalStorageState();
+        if (Environment.MEDIA_MOUNTED.equals(state)) {
+            return true;
+        }
+        return false;
+    }
+
+
 }
