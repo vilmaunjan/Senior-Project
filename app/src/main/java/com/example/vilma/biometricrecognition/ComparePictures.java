@@ -39,13 +39,13 @@ public class ComparePictures extends AsyncTask<Object, String, Float> {
     private String mTarget;
     private Float confidence;
     private static AmazonRekognitionClient rekognitionClient;
-    private static Float similarityThreshold = 80F;
+    private static Float similarityThreshold = 1F;
     private static String bucket = Constants.BUCKET_NAME;
 
-    LoginActivity mActivity;
+    ThisYouActivity mActivity;
 
     //Constructor
-    public ComparePictures(Context context, String source, String target, LoginActivity activity){
+    public ComparePictures(Context context, String source, String target, ThisYouActivity activity){
         mContext = context;
 
         mSource = source;
@@ -77,7 +77,7 @@ public class ComparePictures extends AsyncTask<Object, String, Float> {
         for (CompareFacesMatch match: faceDetails){
             ComparedFace face= match.getFace();
             BoundingBox position = face.getBoundingBox();
-            confidence = face.getConfidence();
+            confidence = match.getSimilarity();
             System.out.println("Face at " + position.getLeft().toString()
                     + " " + position.getTop()
                     + " matches with " + face.getConfidence().toString()

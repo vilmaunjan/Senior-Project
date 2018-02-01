@@ -52,8 +52,7 @@ public class S3Upload extends AsyncTask<String,Void,String>{
 
     @Override
     protected void onPostExecute(String result) {
-        Toast toast = Toast.makeText(mContext, "Upload to S3 complete", Toast.LENGTH_LONG);
-        toast.show();
+
     }
 
     @Override

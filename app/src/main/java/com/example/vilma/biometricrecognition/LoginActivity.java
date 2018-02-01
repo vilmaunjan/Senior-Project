@@ -129,11 +129,11 @@ public class LoginActivity extends BaseActivity implements TakePicFragment.Pictu
     public void initializeResult(Boolean result){
         requirSatisfied = result;
         if(requirSatisfied){
+            Toast.makeText(this, "check done", Toast.LENGTH_LONG).show();
             File file = new File(fragPhotoFilePath);
             String target = txtUsername + "_" + file.getName();
+            String source = txtUsername + "_prime.jpg";
 
-
-            Toast.makeText(this, "Upload to s3 started", Toast.LENGTH_LONG).show();
             S3Upload upload = new S3Upload(this, fragPhotoFilePath, target);
             upload.execute();
 
@@ -147,8 +147,16 @@ public class LoginActivity extends BaseActivity implements TakePicFragment.Pictu
                 e.printStackTrace();
             }
 
-            String source = txtUsername + "_prime.jpg";
-            ComparePictures j = new ComparePictures(this, source, target, this);
+            Intent intentBundle = new Intent(LoginActivity.this,ThisYouActivity.class);
+            Bundle bundle = new Bundle();
+            bundle.putString("PhotoPath", fragPhotoFilePath);
+            bundle.putString("Target",target);
+            bundle.putString("Source",source);
+            bundle.putString("Username", txtUsername);
+            intentBundle.putExtras(bundle);
+            startActivity(intentBundle);
+
+            /*ComparePictures j = new ComparePictures(this, source, target, this);
             j.execute();
             try {
                 j.get();
@@ -159,23 +167,13 @@ public class LoginActivity extends BaseActivity implements TakePicFragment.Pictu
                 Toast.makeText(this, "IM SORRY gabe", Toast.LENGTH_LONG).show();
                 e.printStackTrace();
             }
+            */
 
         }else{
             Toast.makeText(this, "Please enter your username or register a new account!"
                     , Toast.LENGTH_SHORT).show();
 
 
-        }
-    }
-
-    void compareFinish(Float result){
-        Toast.makeText(this,"You made a match of " + result.toString() +"!"
-                ,Toast.LENGTH_LONG).show();
-        if(result>80){
-            Intent registerIntent = new Intent(LoginActivity.this, HomeActivity.class);
-            startActivity(registerIntent);
-        }else{
-            Toast.makeText(this,"Picture doesn't match Prime", Toast.LENGTH_LONG).show();
         }
     }
 

@@ -122,6 +122,9 @@ public class Register extends BaseActivity implements TakePicFragment.PictureTak
             String source = txtUsername + "_prime.jpg";
             S3Upload upload = new S3Upload(this, fragPhotoFilePath, source);
             upload.execute();
+
+            Intent registerIntent = new Intent(Register.this, LoginActivity.class);
+            startActivity(registerIntent);
             //Toast.makeText(this, "Check everything bud i think you did it", Toast.LENGTH_LONG).show();
         }
     }
