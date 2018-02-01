@@ -38,12 +38,15 @@ public class LoginActivity extends BaseActivity implements TakePicFragment.Pictu
     String fragPhotoFilePath;
     TextView txtSignup;
     EditText txtUsernameBox;
+    Button btnLogin;
     String txtUsername;
     boolean requirSatisfied;
     static final int REQUEST_IMAGE_CAPTURE = 1;
     String source;
     String target;
     //This function hold all database connectivity initialization.
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,7 +63,7 @@ public class LoginActivity extends BaseActivity implements TakePicFragment.Pictu
     private void initUI() {
         txtUsernameBox = (EditText) findViewById(R.id.txtUsername);
         txtSignup = (TextView) findViewById(R.id.txtSignup);
-
+        btnLogin = (Button) findViewById(R.id.button2);
 
         txtSignup.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -69,6 +72,39 @@ public class LoginActivity extends BaseActivity implements TakePicFragment.Pictu
                 startActivity(registerIntent);
             }
         });
+
+        btnLogin.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View v) {
+                //this method does like pretty much all the work....like seriously-_-
+                tryToUpload(v);
+            }
+        });
+    }
+
+    private void tryToUpload(View v) {
+        if(fragPhotoFilePath != null){
+            txtUsername = txtUsernameBox.getText().toString();
+            if (txtUsername.equals("") || txtUsername.toString().equals("Enter a Username")) {
+                Toast.makeText(this, "Please enter a valid username", Toast.LENGTH_LONG).show();
+            }else{
+                DbManager.checkTable checkTable = new DbManager.checkTable(this, txtUsername,this);
+                checkTable.execute();
+                try {
+                    checkTable.get();
+                } catch (InterruptedException e) {
+                    Toast.makeText(this, "shit we broke it", Toast.LENGTH_LONG).show();
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    Toast.makeText(this, "shit we broke it", Toast.LENGTH_LONG).show();
+                    e.printStackTrace();
+                }
+            }
+
+        }else{
+            Toast.makeText(this, "Please take a picture first and enter a username!", Toast.LENGTH_LONG).show();
+        }
     }
 
     @Override
@@ -83,72 +119,59 @@ public class LoginActivity extends BaseActivity implements TakePicFragment.Pictu
 
     }
 
-    public void initializeResult(Boolean result){
-        requirSatisfied = result;
-    }
-
-    public void checkTable(Context context, Activity activity, String txtUsername) {
-        DbManager.checkTable checkTable = new DbManager.checkTable(this, txtUsername,this);
-
-        //If none/wrong input
-        if (txtUsername.equals("") || txtUsername.toString().equals("Enter a Username")) {
-            Toast.makeText(context, "Please enter a valid username", Toast.LENGTH_LONG).show();
-        } else { //Else If the user entered something in the text box
-            checkTable.execute();
-        }
-        try {
-            checkTable.get();
-        } catch (InterruptedException e) {
-            Toast.makeText(this, "shit we broke it", Toast.LENGTH_LONG).show();
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            Toast.makeText(this, "shit we broke it", Toast.LENGTH_LONG).show();
-            e.printStackTrace();
-        }
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            checkTable(this,this,txtUsername);
-            if(requirSatisfied){
-                Toast.makeText(this, "Please enter your username or register a new account!"
-                        , Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Nice Pic!", Toast.LENGTH_LONG).show();
+        }
+    }
 
-            }else{
-                File file = new File(fragPhotoFilePath);
-                String source = txtUsername + "_" + file.getName();
+    public void initializeResult(Boolean result){
+        requirSatisfied = result;
+        if(requirSatisfied){
+            File file = new File(fragPhotoFilePath);
+            String target = txtUsername + "_" + file.getName();
 
-                //Toast.makeText(this, "Upload to s3 started", Toast.LENGTH_SHORT).show();
-                S3Upload upload = new S3Upload(this, fragPhotoFilePath, source);
-                upload.execute();
-                try {
-                    upload.get();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } catch (ExecutionException e) {
-                    e.printStackTrace();
-                }
 
-                String target = txtUsername + "_prime.jpg";
-                ComparePictures j = new ComparePictures(this, source, target, this);
-                j.execute();
-                try {
-                    j.get();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } catch (ExecutionException e) {
-                    e.printStackTrace();
-                }
+            Toast.makeText(this, "Upload to s3 started", Toast.LENGTH_LONG).show();
+            S3Upload upload = new S3Upload(this, fragPhotoFilePath, target);
+            upload.execute();
 
+            try {
+                upload.get();
+            } catch (InterruptedException e) {
+                Toast.makeText(this, "IM SORRY vilma", Toast.LENGTH_LONG).show();
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                Toast.makeText(this, "IM SORRY gabe", Toast.LENGTH_LONG).show();
+                e.printStackTrace();
             }
+
+            String source = txtUsername + "_prime.jpg";
+            ComparePictures j = new ComparePictures(this, source, target, this);
+            j.execute();
+            try {
+                j.get();
+            } catch (InterruptedException e) {
+                Toast.makeText(this, "IM SORRY vilma", Toast.LENGTH_LONG).show();
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                Toast.makeText(this, "IM SORRY gabe", Toast.LENGTH_LONG).show();
+                e.printStackTrace();
+            }
+
+        }else{
+            Toast.makeText(this, "Please enter your username or register a new account!"
+                    , Toast.LENGTH_SHORT).show();
+
+
         }
     }
 
     void compareFinish(Float result){
+        Toast.makeText(this,"You made a match of " + result.toString() +"!"
+                ,Toast.LENGTH_LONG).show();
         if(result>80){
-            Toast.makeText(this,"You made a match of " + result.toString() +"!"
-                    ,Toast.LENGTH_LONG).show();
             Intent registerIntent = new Intent(LoginActivity.this, HomeActivity.class);
             startActivity(registerIntent);
         }else{

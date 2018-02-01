@@ -100,25 +100,7 @@ public class Register extends BaseActivity implements TakePicFragment.PictureTak
         //Toast.makeText(this, "we did it", Toast.LENGTH_SHORT).show();
     }
 
-    public void checkTable(Context context, Activity activity, String txtUsername) {
-        DbManager.checkTable checkTable = new DbManager.checkTable(this, txtUsername,this);
 
-        //If none/wrong input
-        if (txtUsername.equals("") || txtUsername.toString().equals("Enter a Username")) {
-            Toast.makeText(context, "Please enter a valid username", Toast.LENGTH_LONG).show();
-        } else { //Else If the user entered something in the text box
-            checkTable.execute();
-        }
-        try {
-            checkTable.get();
-        } catch (InterruptedException e) {
-            Toast.makeText(this, "shit we broke it", Toast.LENGTH_LONG).show();
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            Toast.makeText(this, "shit we broke it", Toast.LENGTH_LONG).show();
-            e.printStackTrace();
-        }
-    }
 
     public void initializeResult(Boolean result){
         requirSatisfied = result;
@@ -150,6 +132,13 @@ public class Register extends BaseActivity implements TakePicFragment.PictureTak
             Toast.makeText(this, "Nice Pic!", Toast.LENGTH_LONG).show();
             setFullImageFromFilePath(fragPhotoFilePath,mImageView);
         }
+    }
+
+    public static Bitmap RotateBitmap(Bitmap source, float angle)
+    {
+        Matrix matrix = new Matrix();
+        matrix.postRotate(angle);
+        return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(), matrix, true);
     }
 
     private void setFullImageFromFilePath(String imagePath, ImageView imageView) {
