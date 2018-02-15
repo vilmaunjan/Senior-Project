@@ -8,55 +8,95 @@
     android:orientation="vertical">
 
 
-    <TextView
-        android:id="@+id/txtWelcome"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="30dp"
-        android:paddingLeft="10dp"
-        android:textColor="@color/colorWhite"
-        android:textSize="40dp"
-        android:text="Welcome"/>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-    <EditText
-        android:id="@+id/txtUsername"
-        android:layout_width="320dp"
-        android:layout_height="40dp"
-        android:layout_gravity="center"
-        android:layout_marginBottom="20dp"
-        android:layout_marginTop="20dp"
-        android:background="@color/colorPrimary"
-        android:hint="Enter Username Here"
-        android:inputType="textPersonName"
-        android:paddingLeft="10dp"
-        android:textColor="@color/colorTextBlack"
-        android:textColorHint="@android:color/darker_gray" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/txtWelcome"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="30dp"
+                android:paddingLeft="10dp"
+                android:text="Welcome"
+                android:textColor="@color/colorWhite"
+                android:textSize="40dp" />
+
+            <EditText
+                android:id="@+id/txtUsername"
+                android:layout_width="320dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center"
+                android:layout_marginBottom="20dp"
+                android:layout_marginTop="20dp"
+                android:background="@color/colorPrimary"
+                android:hint="Enter Username"
+                android:inputType="textPersonName"
+                android:paddingLeft="10dp"
+                android:textColor="@color/colorTextBlack"
+                android:textColorHint="@android:color/darker_gray" />
+
+            <EditText
+                android:id="@+id/txtFirstname"
+                android:layout_width="320dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center"
+                android:layout_marginBottom="20dp"
+                android:layout_marginTop="20dp"
+                android:background="@color/colorPrimary"
+                android:hint="Enter First Name"
+                android:inputType="textPersonName"
+                android:paddingLeft="10dp"
+                android:textColor="@color/colorTextBlack"
+                android:textColorHint="@android:color/darker_gray" />
+
+            <EditText
+                android:id="@+id/txtLastname"
+                android:layout_width="320dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center"
+                android:layout_marginBottom="20dp"
+                android:layout_marginTop="20dp"
+                android:background="@color/colorPrimary"
+                android:hint="Enter Last Name"
+                android:inputType="textPersonName"
+                android:paddingLeft="10dp"
+                android:textColor="@color/colorTextBlack"
+                android:textColorHint="@android:color/darker_gray" />
+
+            <fragment
+                android:id="@+id/fragment"
+                android:name="com.example.vilma.biometricrecognition.TakePicFragment"
+                android:layout_width="320dp"
+                android:layout_height="45dp"
+                android:layout_gravity="center"
+                android:layout_marginBottom="20dp"
+                tools:layout="@layout/take_pic_fragment" />
+
+            <ImageView
+                android:id="@+id/image_view"
+                android:layout_width="350dp"
+                android:layout_height="200dp"
+                android:layout_gravity="center"
+                android:layout_marginBottom="20dp" />
+
+            <Button
+                android:id="@+id/btnRegister"
+                android:layout_width="180dp"
+                android:layout_height="50dp"
+                android:layout_gravity="right"
+                android:layout_marginRight="30dp"
+                android:backgroundTint="@color/colorAccent"
+                android:text="Create Account"
+                android:textColor="@color/colorPrimaryDark" />
+        </LinearLayout>
+    </ScrollView>
 
 
-    <fragment
-        android:id="@+id/fragment"
-        android:name="com.example.vilma.biometricrecognition.TakePicFragment"
-        android:layout_width="320dp"
-        android:layout_height="45dp"
-        android:layout_gravity="center"
-        android:layout_marginBottom="20dp"
-        tools:layout="@layout/take_pic_fragment" />
-
-    <ImageView
-        android:id="@+id/image_view"
-        android:layout_width="350dp"
-        android:layout_height="200dp"
-        android:layout_marginBottom="20dp"
-        android:layout_gravity="center" />
-
-    <Button
-        android:id="@+id/btnRegister"
-        android:layout_width="180dp"
-        android:layout_height="50dp"
-        android:layout_gravity="right"
-        android:layout_marginRight="30dp"
-        android:backgroundTint="@color/colorAccent"
-        android:text="Create Account"
-        android:textColor="@color/colorPrimaryDark" />
 </LinearLayout>

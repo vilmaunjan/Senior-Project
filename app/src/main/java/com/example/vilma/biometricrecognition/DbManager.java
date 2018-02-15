@@ -35,12 +35,17 @@ public class DbManager {
 
     public static class createItem extends AsyncTask<String, Void, Boolean> {
         String txtUsername;
+        String txtFirstname;
+        String txtLastname;
 
         // Save the context received via constructor in a local variable
         // it also saves the activity of the current view
-        public createItem(Context context, String Username) {
+        public createItem(Context context, String[] Username) {
             currentContext = context;
-            txtUsername = Username;
+            txtUsername = Username[0];
+            txtFirstname = Username[1];
+            txtLastname = Username[2];
+
         }
 
         @Override
@@ -73,6 +78,8 @@ public class DbManager {
 
     public static class checkTable extends AsyncTask<String, Void, Boolean> {
         String txtUsername;
+        String[] dataUser = new String[5];
+
         public static boolean loginFlag;
         LoginActivity lObj = null; //Need to have this to pass the loginFlag to LoginActivity
         Register rObj = null;
@@ -112,6 +119,10 @@ public class DbManager {
                 loginFlag = false;
             } else { //Success
                DbManager.prime_pic =result.get(0).getPic1();
+               dataUser[0] = result.get(0).getUserId();
+               dataUser[1] = result.get(0).getFirstName();
+               dataUser[2] = result.get(0).getLastName();
+
                 loginFlag = true;
             }
             return loginFlag;
@@ -122,6 +133,7 @@ public class DbManager {
                 rObj.initializeResult(result);
             }
             if(lObj != null){
+                lObj.getUserData(dataUser);
                 lObj.initializeResult(result);
             }
         }

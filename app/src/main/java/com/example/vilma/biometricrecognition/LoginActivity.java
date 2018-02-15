@@ -40,6 +40,8 @@ public class LoginActivity extends BaseActivity implements TakePicFragment.Pictu
     EditText txtUsernameBox;
     Button btnLogin;
     String txtUsername;
+    String txtFirstname;
+    String txtLastname;
     boolean requirSatisfied;
     static final int REQUEST_IMAGE_CAPTURE = 1;
     String source;
@@ -107,9 +109,18 @@ public class LoginActivity extends BaseActivity implements TakePicFragment.Pictu
         }
     }
 
+    public void getUserData(String[] dataUser){
+        txtFirstname = dataUser[1];
+        txtLastname = dataUser[2];
+//        Toast.makeText(this, txtFirstname+","+txtLastname+ "!"
+//                , Toast.LENGTH_LONG).show();
+
+    }
+
     @Override
     public String getTxt() {
         return txtUsername = txtUsernameBox.getText().toString();
+
     }
 
     @Override
@@ -149,6 +160,8 @@ public class LoginActivity extends BaseActivity implements TakePicFragment.Pictu
 
             Intent intentBundle = new Intent(LoginActivity.this,ThisYouActivity.class);
             Bundle bundle = new Bundle();
+            bundle.putString("FirstName", txtFirstname);
+            bundle.putString("LastName", txtLastname);
             bundle.putString("PhotoPath", fragPhotoFilePath);
             bundle.putString("Target",target);
             bundle.putString("Source",source);

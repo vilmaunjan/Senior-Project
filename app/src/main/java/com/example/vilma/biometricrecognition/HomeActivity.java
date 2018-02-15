@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBMapper;
@@ -20,6 +21,10 @@ import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBMapper;
 public class HomeActivity extends BaseActivity {
 
     Button btnCheckout;
+    TextView usernameTxtView;
+    String txtFirstname;
+    String txtLastname;
+    String txtUsername;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +39,16 @@ public class HomeActivity extends BaseActivity {
 
     private void initUI() {
         btnCheckout = (Button) findViewById(R.id.btnCheckout);
+        usernameTxtView = findViewById(R.id.txtName);
+
+        Intent intentExtras = getIntent();
+        Bundle extraBundle = intentExtras.getExtras();
+        txtFirstname = extraBundle.getString("FirstName");
+        txtLastname = extraBundle.getString("LastName");
+        txtUsername = extraBundle.getString("Username");
+
+//        usernameTxtView.setText(txtFirstname+","+txtLastname);
+        usernameTxtView.setText(txtUsername);
 
         btnCheckout.setOnClickListener(new View.OnClickListener() {
             @Override

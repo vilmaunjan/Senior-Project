@@ -36,7 +36,12 @@ public class Register extends BaseActivity implements TakePicFragment.PictureTak
     ImageView mImageView;
     EditText txtUsernameBox;
     String txtUsername;
+    EditText txtFirstnameBox;
+    EditText txtLastnameBox;
     Button btnRegister;
+
+    String[] dataUser= new String[5];
+
     static final int REQUEST_IMAGE_CAPTURE = 1;
     private String fragPhotoFilePath = null;
     boolean requirSatisfied;
@@ -54,6 +59,9 @@ public class Register extends BaseActivity implements TakePicFragment.PictureTak
         mImageView = (ImageView) findViewById(R.id.image_view);
         txtUsernameBox = (EditText) findViewById(R.id.txtUsername);
         btnRegister = (Button) findViewById(R.id.btnRegister);
+        txtFirstnameBox = (EditText) findViewById(R.id.txtFirstname);
+        txtLastnameBox = (EditText) findViewById(R.id.txtLastname);
+
 
         btnRegister.setOnClickListener(new View.OnClickListener(){
 
@@ -69,8 +77,13 @@ public class Register extends BaseActivity implements TakePicFragment.PictureTak
     private void tryToUpload(View v) {
         if(fragPhotoFilePath != null){
             txtUsername = txtUsernameBox.getText().toString();
-            if (txtUsername.equals("") || txtUsername.toString().equals("Enter a Username")) {
-                Toast.makeText(this, "Please enter a valid username", Toast.LENGTH_LONG).show();
+            dataUser[0] = txtUsernameBox.getText().toString();
+            dataUser[1] = txtFirstnameBox.getText().toString();
+            dataUser[2] = txtLastnameBox.getText().toString();
+            if (txtUsername.equals("") || txtUsername.toString().equals("Enter a Username")
+                    ||dataUser[1].equals("") || dataUser[1].toString().equals("Enter a Username")
+                    ||dataUser[2].equals("") || dataUser[2].toString().equals("Enter a Username")) {
+                Toast.makeText(this, "Please enter every field", Toast.LENGTH_LONG).show();
             }else{
                 DbManager.checkTable checkTable = new DbManager.checkTable(this, txtUsername,this);
                 checkTable.execute();
@@ -111,7 +124,7 @@ public class Register extends BaseActivity implements TakePicFragment.PictureTak
             Toast.makeText(this, "Please enter a unique username", Toast.LENGTH_SHORT).show();
         }else{
             Toast.makeText(this, "Welcome to Hertz!", Toast.LENGTH_SHORT).show();
-            DbManager.createItem createItem = new DbManager.createItem(this, txtUsername);
+            DbManager.createItem createItem = new DbManager.createItem(this, dataUser);
             createItem.execute();
 
             try {

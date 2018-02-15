@@ -21,6 +21,9 @@ public class ThisYouActivity extends BaseActivity{
     Button no;
     TextView thisYou;
     TextView usernameTxtView;
+    String txtFirstname;
+    String txtLastname;
+    String txtUsername;
     String previewPhotoPath;
     String target;
     String source;
@@ -43,11 +46,13 @@ public class ThisYouActivity extends BaseActivity{
 
         Intent intentExtras = getIntent();
         Bundle extraBundle = intentExtras.getExtras();
+        txtFirstname = extraBundle.getString("FirstName");
+        txtLastname = extraBundle.getString("LastName");
+        txtUsername = extraBundle.getString("Username");
         previewPhotoPath = extraBundle.getString("PhotoPath");
         target = extraBundle.getString("Target");
         source = extraBundle.getString("Source");
         username = extraBundle.getString("Username");
-
         usernameTxtView.setText(username);
         setPic();
 
@@ -84,7 +89,13 @@ public class ThisYouActivity extends BaseActivity{
             if (result > 80) {
                 Toast.makeText(this, "You made a match of " + this.result.toString() + "!"
                         , Toast.LENGTH_LONG).show();
+
                 Intent registerIntent = new Intent(ThisYouActivity.this, HomeActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putString("FirstName", txtFirstname);
+                bundle.putString("LastName", txtLastname);
+                bundle.putString("Username", txtUsername);
+                registerIntent.putExtras(bundle);
                 startActivity(registerIntent);
             } else {
                 Toast.makeText(this, "Match of only " + this.result.toString(), Toast.LENGTH_LONG)
