@@ -9,6 +9,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
@@ -23,6 +24,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.concurrent.ExecutionException;
 
@@ -75,10 +77,10 @@ public class Register extends BaseActivity implements TakePicFragment.PictureTak
                 try {
                     checkTable.get();
                 } catch (InterruptedException e) {
-                    Toast.makeText(this, "shit we broke it", Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, "Interrupted Exception", Toast.LENGTH_LONG).show();
                     e.printStackTrace();
                 } catch (ExecutionException e) {
-                    Toast.makeText(this, "shit we broke it", Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, "Execution Exception", Toast.LENGTH_LONG).show();
                     e.printStackTrace();
                 }
             }
@@ -88,6 +90,7 @@ public class Register extends BaseActivity implements TakePicFragment.PictureTak
         }
     }
 
+    //method below allows TakePicFragment to grab the username the user typed in
     @Override
     public String getTxt(){
         return txtUsername= txtUsernameBox.getText().toString();
@@ -101,7 +104,7 @@ public class Register extends BaseActivity implements TakePicFragment.PictureTak
     }
 
 
-
+    //handles what happens when we need to create a new user into the database
     public void initializeResult(Boolean result){
         requirSatisfied = result;
         if(requirSatisfied){
@@ -137,13 +140,6 @@ public class Register extends BaseActivity implements TakePicFragment.PictureTak
         }
     }
 
-    public static Bitmap RotateBitmap(Bitmap source, float angle)
-    {
-        Matrix matrix = new Matrix();
-        matrix.postRotate(angle);
-        return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(), matrix, true);
-    }
-
     private void setFullImageFromFilePath(String imagePath, ImageView imageView) {
         // Get the dimensions of the View
         int targetW = imageView.getWidth();
@@ -165,6 +161,33 @@ public class Register extends BaseActivity implements TakePicFragment.PictureTak
         bmOptions.inPurgeable = true;
 
         Bitmap bitmap = BitmapFactory.decodeFile(imagePath, bmOptions);
-        imageView.setImageBitmap(bitmap);
+        rotateImage(bitmap);
+    }
+
+    private void rotateImage(Bitmap bitmap) {
+        ExifInterface exifInterface = null;
+        try{
+            exifInterface = new ExifInterface(fragPhotoFilePath);
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+
+        int orientation = exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_UNDEFINED);
+        Matrix matrix = new Matrix();
+
+        switch (orientation){
+            case ExifInterface.ORIENTATION_ROTATE_90:
+                matrix.setRotate(90);
+                break;
+            case ExifInterface.ORIENTATION_ROTATE_180:
+                matrix.setRotate(180);
+                break;
+            case ExifInterface.ORIENTATION_ROTATE_270:
+                matrix.setRotate(270);
+            default:
+        }
+        Bitmap rotatedBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(),
+                matrix, true);
+        mImageView.setImageBitmap(rotatedBitmap);
     }
 }

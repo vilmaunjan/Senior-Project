@@ -3,6 +3,7 @@ package com.example.vilma.biometricrecognition;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -117,6 +118,7 @@ public class TakePicFragment<T> extends Fragment{
                 Uri photoURI = FileProvider.getUriForFile(context,
                         "com.example.vilma.biometricrecognition.fileprovider",
                         photoFile);
+                takePictureIntent.putExtra(MediaStore.EXTRA_SCREEN_ORIENTATION, ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
                 picCommander.picClick(fragPhotoFilePath,userName);
                 getActivity().startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
