@@ -53,7 +53,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="Not a memeber? Join Now!"
+        android:text="Not a member? Join Now!"
         android:textColor="@color/colorTextButton"
         android:textSize="16sp" />
 
