@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -52,10 +53,14 @@ public class LoginActivity extends BaseActivity implements TakePicFragment.Pictu
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //setContentView(R.layout.activity_login);
+        setContentView(R.layout.activity_login);
+        toolbar = (Toolbar)findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false); //so it doesnt show any text in the toolbar
+
         //Use frame layout instead of setContentView to include the menu and toolbar
-        FrameLayout contentFrameLayout = (FrameLayout) findViewById(R.id.content_frame); //Remember this is the FrameLayout area within your activity_main.xml
-        getLayoutInflater().inflate(R.layout.activity_login, contentFrameLayout);
+        //FrameLayout contentFrameLayout = (FrameLayout) findViewById(R.id.content_frame); //Remember this is the FrameLayout area within your activity_main.xml
+        //getLayoutInflater().inflate(R.layout.activity_login, contentFrameLayout);
 
         initUI();
 
@@ -112,22 +117,18 @@ public class LoginActivity extends BaseActivity implements TakePicFragment.Pictu
     public void getUserData(String[] dataUser){
         txtFirstname = dataUser[1];
         txtLastname = dataUser[2];
-//        Toast.makeText(this, txtFirstname+","+txtLastname+ "!"
-//                , Toast.LENGTH_LONG).show();
-
+//        Toast.makeText(this, txtFirstname+","+txtLastname+ "!", Toast.LENGTH_LONG).show();
     }
 
     @Override
     public String getTxt() {
         return txtUsername = txtUsernameBox.getText().toString();
-
     }
 
     @Override
     public void picClick(String fragPhotoFilePath, String txtUsername) {
         this.fragPhotoFilePath = fragPhotoFilePath;
         this.txtUsername = txtUsername;
-
     }
 
     @Override
@@ -140,7 +141,7 @@ public class LoginActivity extends BaseActivity implements TakePicFragment.Pictu
     public void initializeResult(Boolean result){
         requirSatisfied = result;
         if(requirSatisfied){
-            Toast.makeText(this, "check done", Toast.LENGTH_LONG).show();
+            //Toast.makeText(this, "check done", Toast.LENGTH_LONG).show();
             File file = new File(fragPhotoFilePath);
             String target = txtUsername + "_" + file.getName();
             String source = txtUsername + "_prime.jpg";

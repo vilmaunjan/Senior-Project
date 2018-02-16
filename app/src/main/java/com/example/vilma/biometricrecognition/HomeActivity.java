@@ -1,6 +1,7 @@
 package com.example.vilma.biometricrecognition;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -20,6 +21,7 @@ import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBMapper;
  */
 public class HomeActivity extends BaseActivity {
 
+    Button btnAccount;
     Button btnCheckout;
     TextView usernameTxtView;
     String txtFirstname;
@@ -38,17 +40,32 @@ public class HomeActivity extends BaseActivity {
     }
 
     private void initUI() {
+        btnAccount = (Button) findViewById(R.id.btnAccount);
         btnCheckout = (Button) findViewById(R.id.btnCheckout);
         usernameTxtView = findViewById(R.id.txtName);
 
         Intent intentExtras = getIntent();
         Bundle extraBundle = intentExtras.getExtras();
-        txtFirstname = extraBundle.getString("FirstName");
-        txtLastname = extraBundle.getString("LastName");
-        txtUsername = extraBundle.getString("Username");
+        //txtFirstname = extraBundle.getString("FirstName");
+        //txtLastname = extraBundle.getString("LastName");
+        //txtUsername = extraBundle.getString("Username");
 
-//        usernameTxtView.setText(txtFirstname+","+txtLastname);
-        usernameTxtView.setText(txtUsername);
+        //Do this so that the user info can be stored for all activities, and so we dont need to pass from 1 activity to another
+        SharedPreferences prefs = this.getSharedPreferences("MyPref",MODE_PRIVATE);
+        txtFirstname = prefs.getString("FirstName",null);
+        txtLastname = prefs.getString("LastName",null);
+        txtUsername = prefs.getString("Username",null);
+
+        usernameTxtView.setText(txtFirstname+" "+txtLastname);
+//        usernameTxtView.setText(txtUsername);
+
+        btnAccount.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intentAccount = new Intent(HomeActivity.this,AccountActivity.class);
+                startActivity(intentAccount);
+            }
+        });
 
         btnCheckout.setOnClickListener(new View.OnClickListener() {
             @Override

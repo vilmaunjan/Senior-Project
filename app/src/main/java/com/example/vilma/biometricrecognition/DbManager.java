@@ -64,7 +64,8 @@ public class DbManager {
                     .withHashKeyValues(accountsDo);
 
             PaginatedList<AccountsDO> result = dynamoDBMapper.query(AccountsDO.class, queryExpression);
-
+            accountsDo.setFirstName(txtFirstname);
+            accountsDo.setLastName(txtLastname);
             accountsDo.setPic1(txtUsername+"_prime.jpg");
             // it creates new item in DynamoDB
             dynamoDBMapper.save(accountsDo);

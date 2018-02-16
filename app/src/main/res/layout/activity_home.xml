@@ -105,14 +105,14 @@
             android:background="@color/colorPrimaryDark" />
 
         <Button
-            android:id="@+id/button3"
+            android:id="@+id/btnAccount"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_column="0"
             android:layout_columnSpan="2"
             android:layout_row="3"
-            android:paddingStart="15dp"
             android:background="@android:color/transparent"
+            android:paddingStart="15dp"
             android:text="VIEW ACCOUNT ->"
             android:textAlignment="viewStart"
             android:textColor="@color/colorPrimaryDark" />
@@ -160,7 +160,7 @@
         <Button
             android:id="@+id/btnTripSummary"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="40dp"
             android:background="@android:color/transparent"
             android:paddingLeft="15dp"
             android:text="VIEW TRIP SUMMARY ->"

@@ -16,6 +16,7 @@ import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -51,6 +52,10 @@ public class Register extends BaseActivity implements TakePicFragment.PictureTak
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
+        toolbar = (Toolbar)findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false); //so it doesnt show any text in the toolbar
+
         initUI();
     }
 
@@ -174,7 +179,8 @@ public class Register extends BaseActivity implements TakePicFragment.PictureTak
         bmOptions.inPurgeable = true;
 
         Bitmap bitmap = BitmapFactory.decodeFile(imagePath, bmOptions);
-        rotateImage(bitmap);
+        mImageView.setImageBitmap(bitmap);
+        //rotateImage(bitmap);
     }
 
     private void rotateImage(Bitmap bitmap) {

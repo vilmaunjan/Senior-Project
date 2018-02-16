@@ -1,10 +1,12 @@
 package com.example.vilma.biometricrecognition;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -34,6 +36,10 @@ public class ThisYouActivity extends BaseActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_thisyou);
+        toolbar = (Toolbar)findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false); //so it doesnt show any text in the toolbar
+
         initUI();
     }
 
@@ -97,6 +103,17 @@ public class ThisYouActivity extends BaseActivity{
                 bundle.putString("Username", txtUsername);
                 registerIntent.putExtras(bundle);
                 startActivity(registerIntent);
+
+                //Use sharedPreferences to pass data to another activities without starting the other activity
+                SharedPreferences prefs = this.getSharedPreferences("MyPref",MODE_PRIVATE);
+                SharedPreferences.Editor editor = prefs.edit();
+                editor.putString("FirstName", txtFirstname);
+                editor.putString("LastName", txtLastname);
+                editor.putString("Username", txtUsername);
+                editor.putFloat("Similarity", result);
+                editor.putString("Imagepath",previewPhotoPath);
+                editor.commit();
+
             } else {
                 Toast.makeText(this, "Match of only " + this.result.toString(), Toast.LENGTH_LONG)
                         .show();

@@ -5,28 +5,38 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@drawable/car">
+    android:background="@drawable/black_car">
+
+    <include
+        android:id="@+id/toolbar"
+        layout="@layout/tool_bar"
+        />
+
 
     <EditText
         android:id="@+id/txtUsername"
-        android:layout_width="320dp"
+        android:layout_width="match_parent"
         android:layout_height="40dp"
         android:layout_gravity="center"
-        android:layout_marginTop="170dp"
-        android:paddingLeft="10dp"
+        android:layout_marginEnd="40dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="100dp"
+        android:background="@color/colorOpaque"
+        android:hint="Enter Username Here"
         android:inputType="textPersonName"
-        android:background="@color/colorPrimary"
-        android:textColor="@color/colorTextBlack"
-        android:hint="Enter Username Here"/>
+        android:paddingLeft="10dp"
+        android:textColor="@color/colorTextBlack" />
 
     <fragment
         android:id="@+id/fragment2"
         android:name="com.example.vilma.biometricrecognition.TakePicFragment"
-        android:layout_width="100dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginBottom="5dp"
-        android:layout_marginTop="100dp"
+        android:layout_marginBottom="150dp"
+        android:layout_marginTop="40dp"
+        android:layout_marginEnd="40dp"
+        android:layout_marginStart="40dp"
         tools:layout="@layout/take_pic_fragment" />
 
     <Button
@@ -43,7 +53,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="Create an account"
-        android:textColor="@color/colorTextButton" />
+        android:text="Not a memeber? Join Now!"
+        android:textColor="@color/colorTextButton"
+        android:textSize="16sp" />
 
 </LinearLayout>

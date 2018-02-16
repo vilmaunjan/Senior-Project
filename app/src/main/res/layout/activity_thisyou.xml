@@ -8,21 +8,27 @@
     android:orientation="vertical"
     android:background="@drawable/car1">
 
+    <include
+        android:id="@+id/toolbar"
+        layout="@layout/tool_bar"
+        />
+
     <TextView
         android:id="@+id/txtIsThisYou"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="20dp"
         android:text="Ready?"
-        android:textColor="@color/colorTextButton"
+        android:textColor="@color/colorPrimaryDark"
         android:textSize="40sp" />
 
     <ImageView
         android:id="@+id/previewImageView"
-        android:layout_width="350dp"
-        android:layout_height="200dp"
-        android:layout_marginBottom="20dp"
+        android:layout_width="230dp"
+        android:layout_height="270dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
         android:layout_gravity="center" android:contentDescription="TODO"/>
 
     <TextView
@@ -30,31 +36,34 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginTop="20dp"
-        android:background="@android:color/darker_gray"
+        android:background="@color/colorOpaque"
         android:text="Username"
-        android:textColor="@color/colorTextButton"
+        android:textColor="@color/colorPrimaryDark"
         android:textSize="30sp"
         android:textStyle="bold" />
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="horizontal">
+        android:layout_width="336dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="horizontal"
+        android:paddingEnd="20dp"
+        android:paddingStart="20dp"
+        android:paddingTop="20dp">
 
         <Button
             android:id="@+id/btnNo"
-            android:layout_width="match_parent"
+            android:layout_width="155dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_weight="1"
             android:backgroundTint="@color/colorAccent"
             android:text="NO"
-            android:textColor="@color/colorPrimaryDark"  />
+            android:textColor="@color/colorPrimaryDark" />
 
         <Button
             android:id="@+id/btnYes"
-            android:layout_width="match_parent"
+            android:layout_width="155dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_weight="1"
