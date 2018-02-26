@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@drawable/car">
+    android:background="@color/colorWhite">
 
     <TextView
         android:id="@+id/txtWB"
@@ -82,7 +82,7 @@
             android:layout_marginStart="15dp"
             android:layout_marginEnd="50dp"
             android:layout_row="1"
-            android:text="Gold Plus"
+            android:text="Prime member"
             android:textColor="@color/colorPrimaryDark" />
 
         <TextView
@@ -92,7 +92,7 @@
             android:layout_column="1"
             android:layout_marginStart="50dp"
             android:layout_row="1"
-            android:text="103,003"
+            android:text="10"
             android:textColor="@color/colorPrimaryDark" />
 
         <View
@@ -134,7 +134,7 @@
             android:layout_marginEnd="15dp"
             android:layout_marginStart="15dp"
             android:layout_marginTop="20dp"
-            android:text="UPCOMING RESERVATION"
+            android:text="ACCOUNT BALANCE"
             android:textColor="@color/colorPrimaryDark" />
 
         <TextView
@@ -163,7 +163,7 @@
             android:layout_height="40dp"
             android:background="@android:color/transparent"
             android:paddingLeft="15dp"
-            android:text="VIEW TRIP SUMMARY ->"
+            android:text="VIEW CART->"
             android:textAlignment="viewStart"
             android:textColor="@color/colorPrimaryDark" />
 
@@ -173,7 +173,7 @@
             android:layout_height="wrap_content"
             android:background="@android:color/transparent"
             android:paddingLeft="15dp"
-            android:text="DIGITAL CHECKOUT ->"
+            android:text="CHECKOUT ->"
             android:textAlignment="viewStart"
             android:textColor="@color/colorPrimaryDark" />
     </LinearLayout>
